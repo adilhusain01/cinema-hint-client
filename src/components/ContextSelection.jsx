@@ -28,7 +28,6 @@ const ContextSelection = ({ preferences, setPreferences, onNext }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const apiClient = new ApiClient();
 
   console.log('Preferences from ContextSelection', preferences);
 
@@ -107,7 +106,7 @@ const ContextSelection = ({ preferences, setPreferences, onNext }) => {
           </div>
 
           <div>
-            <h3 className="text-white/90 mb-4">Mood</h3>
+            <h3 className="text-white/90 mb-4">Mood (Can multiple choose my boy 🚬)</h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
               {moods.map(({ id, label, icon }) => (
                 <button

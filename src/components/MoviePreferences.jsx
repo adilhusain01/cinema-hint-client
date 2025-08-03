@@ -87,7 +87,7 @@ const MoviePreferences = ({ movies = [], preferences, setPreferences, onNext, is
           <Film className="w-10 h-10 text-white" />
         </div>
         <h2 className="text-2xl font-bold text-white mb-4">Preparing your movie selection</h2>
-        <p className="text-white/70 mb-6">We're finding the perfect movies to match your taste.</p>
+        <p className="text-white/70 mb-6">Yayyy or Nayyy — rate your past watches below! (if any)</p>
         <div className="w-full bg-white/20 rounded-full h-2">
           <div className="bg-gradient-to-r from-purple-500 to-blue-500 h-2 rounded-full animate-pulse w-1/2"></div>
         </div>
