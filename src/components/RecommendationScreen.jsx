@@ -21,7 +21,6 @@ const RecommendationScreen = ({ movie: rawMovie, backupMovies, onFeedback, onSta
     posterPath: movie?.posterPath,
     backdropPath: movie?.backdropPath,
     reason: rawMovie?.reason, // These come from the AI, not from the database
-    aiGenre: rawMovie?.aiGenre
   };
 
   return (
