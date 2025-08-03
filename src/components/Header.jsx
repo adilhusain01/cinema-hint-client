@@ -13,8 +13,8 @@ const Header = ({ user, onSignOut, onStartOver }) => (
             </div>
           </div>
           <div>
-            <h1 className="text-xl font-black text-white">MovieMagnet</h1>
-            <p className="text-xs text-white/60 -mt-1">Zero-effort picks</p>
+            <h1 className="text-xl font-black text-white">Cinema Hint</h1>
+            <p className="text-xs text-white/60 -mt-1">One suggestion. No endless scrolling.</p>
           </div>
         </div>
         
