@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Clock, Star, Sparkles, ThumbsUp, ThumbsDown, RefreshCw } from 'lucide-react';
 
-const RecommendationScreen = ({ movie: rawMovie, backupMovies, onFeedback, onStartOver, onSendAgain }) => {
-  const [showBackups, setShowBackups] = useState(false);
+const RecommendationScreen = ({ movie: rawMovie, onFeedback, onStartOver, onSendAgain, onGetAlternative }) => {
+  const [isLoading, setIsLoading] = useState(false);
   
   // Handle both Mongoose document and plain object cases
   const movie = rawMovie?._doc || rawMovie;
@@ -21,6 +21,20 @@ const RecommendationScreen = ({ movie: rawMovie, backupMovies, onFeedback, onSta
     posterPath: movie?.posterPath,
     backdropPath: movie?.backdropPath,
     reason: rawMovie?.reason, // These come from the AI, not from the database
+  };
+
+  const handleNotForMe = async () => {
+    setIsLoading(true);
+    try {
+      // Submit negative feedback first
+      await onFeedback(false);
+      // Then get an alternative recommendation
+      await onGetAlternative();
+    } catch (error) {
+      console.error('Error getting alternative:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -111,14 +125,21 @@ const RecommendationScreen = ({ movie: rawMovie, backupMovies, onFeedback, onSta
                 </button>
                 
                 <button
-                  onClick={() => {
-                    onFeedback(false);
-                    setShowBackups(true);
-                  }}
-                  className="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-xl transition-all transform hover:scale-105 flex items-center space-x-2"
+                  onClick={handleNotForMe}
+                  disabled={isLoading}
+                  className="bg-red-600 hover:bg-red-700 disabled:bg-red-600/50 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-xl transition-all transform hover:scale-105 flex items-center space-x-2"
                 >
-                  <ThumbsDown className="w-5 h-5" />
-                  <span>Not for me</span>
+                  {isLoading ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                      <span>Getting Alternative...</span>
+                    </>
+                  ) : (
+                    <>
+                      <ThumbsDown className="w-5 h-5" />
+                      <span>Not for me</span>
+                    </>
+                  )}
                 </button>
                 
                 <button
@@ -134,55 +155,13 @@ const RecommendationScreen = ({ movie: rawMovie, backupMovies, onFeedback, onSta
                   className="bg-white/20 hover:bg-white/30 text-white font-semibold py-3 px-6 rounded-xl transition-all flex items-center space-x-2"
                 >
                   <RefreshCw className="w-5 h-5" />
-                  <span>Send Again</span>
+                  <span>Try Again</span>
                 </button>
               </div>
             </div>
           </div>
         </div>
       </div>
-      
-      {showBackups && backupMovies.length > 0 && (
-        <div className="mt-8">
-          <h2 className="text-2xl font-bold text-white mb-6 text-center">
-            Here are some alternatives:
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {backupMovies.map((rawBackupMovie) => {
-              const backupMovie = rawBackupMovie?._doc || rawBackupMovie;
-              const year = backupMovie?.releaseDate ? 
-                new Date(backupMovie.releaseDate).getFullYear() : null;
-              
-              return (
-                <div key={backupMovie.tmdbId} className="bg-white/10 backdrop-blur-lg rounded-xl overflow-hidden">
-                  {backupMovie.posterPath && (
-                    <img 
-                      src={backupMovie.posterPath} 
-                      alt={backupMovie.title}
-                      className="w-full h-64 object-cover"
-                    />
-                  )}
-                  <div className="p-4">
-                    <h3 className="text-white font-semibold mb-2">{backupMovie.title}</h3>
-                    <p className="text-white/60 text-sm mb-3">
-                      {year} • ⭐ {(backupMovie.rating || backupMovie.voteAverage)?.toFixed(1)}
-                    </p>
-                    <p className="text-white/80 text-sm mb-4 line-clamp-3">
-                      {rawBackupMovie.reason}
-                    </p>
-                    <button
-                      onClick={() => onFeedback(true)}
-                      className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg transition-all"
-                    >
-                      Choose This One
-                    </button>
-                  </div>
-                </div>
-            )})}
-          </div>
-          </div>
-      )}
     </div>
   );
 }

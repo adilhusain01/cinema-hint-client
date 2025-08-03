@@ -101,7 +101,6 @@ export class ApiClient {
   }
 
   async getRecommendation({ genres, moods, socialContext, dealBreakers}) {
-    
     const preferences = {
       genres,
       moods,
@@ -110,6 +109,24 @@ export class ApiClient {
     };
 
     console.log('Sending recommendation request with:', preferences);
+  
+    return this.request('/movies/recommend', {
+      method: 'POST',
+      body: JSON.stringify(preferences)
+    });
+  }
+
+  // NEW: Get alternative recommendation (reuses the same recommend endpoint)
+  async getAlternativeRecommendation({ genres, moods, socialContext, dealBreakers}) {
+    const preferences = {
+      genres,
+      moods,
+      socialContext,
+      dealBreakers,
+      isAlternative: true // Flag to indicate this is an alternative request
+    };
+
+    console.log('Sending alternative recommendation request with:', preferences);
   
     return this.request('/movies/recommend', {
       method: 'POST',
@@ -176,8 +193,9 @@ export class ApiClient {
     return this.request('/health');
   }
 
-  // Backup recommendations
+  // DEPRECATED: Remove backup recommendations as we're now using alternatives
   async getBackupRecommendations() {
+    console.warn('getBackupRecommendations is deprecated. Use getAlternativeRecommendation instead.');
     return this.request('/movies/backup', {
       method: 'POST'
     });

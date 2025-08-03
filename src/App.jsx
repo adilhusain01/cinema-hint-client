@@ -76,10 +76,9 @@ function App() {
   });
 
   const [recommendation, setRecommendation] = useState(null);
-  const [backupRecommendations, setBackupRecommendations] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [popularMovies, setPopularMovies] = useState([]);
-    const [error, setError] = useState(null);
+  const [error, setError] = useState(null);
 
   // Initialize Google Auth
   useEffect(() => {
@@ -166,6 +165,27 @@ function App() {
     }
   };
 
+  // Get alternative recommendation (replaces current movie)
+  const getAlternativeRecommendation = async () => {
+    if (!user) return;
+    setError(null);
+    
+    setIsLoading(true);
+    setCurrentStep('processing'); // Show processing screen while getting alternative
+    
+    try {
+      const movie = await apiClient.getAlternativeRecommendation(preferences);
+      setRecommendation(movie);
+      setCurrentStep('recommendation');
+    } catch (error) {
+      console.error('Error getting alternative recommendation:', error);
+      setError(error.message);
+      setCurrentStep('error');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Handle feedback
   const handleFeedback = async (accepted) => {
     if (!user || !recommendation) return;
@@ -186,23 +206,8 @@ function App() {
       // Mark this recommendation as having received feedback
       setRecommendation(prev => ({ ...prev, feedbackGiven: true }));
 
-      if (!accepted) {
-        getBackupRecommendations();
-      }
     } catch (error) {
       console.error('Error submitting feedback:', error);
-    }
-  };
-
-  // Get backup recommendations
-  const getBackupRecommendations = async () => {
-    if (!user) return;
-
-    try {
-      const backups = await apiClient.getBackupRecommendations();
-      setBackupRecommendations(backups);
-    } catch (error) {
-      console.error('Error getting backup recommendations:', error);
     }
   };
 
@@ -218,7 +223,6 @@ function App() {
       dealBreakers: []
     });
     setRecommendation(null);
-    setBackupRecommendations([]);
   };
 
   const sendAgain = () => {
@@ -291,7 +295,6 @@ function App() {
             setPreferences={setPreferences}
             onNext={async () => {
               setCurrentStep('processing');
-              // await getRecommendation(preferences);
               await getRecommendation();
             }}
           />
@@ -304,13 +307,12 @@ function App() {
         {currentStep === 'recommendation' && recommendation && (
           <RecommendationScreen
             movie={recommendation}
-            backupMovies={backupRecommendations}
             onFeedback={handleFeedback}
             onStartOver={startOver}
             onSendAgain={sendAgain}
+            onGetAlternative={getAlternativeRecommendation}
           />
         )}
-
 
         {currentStep === 'error' && error && (
           <ErrorScreen
