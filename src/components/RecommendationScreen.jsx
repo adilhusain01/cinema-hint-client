@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Clock, Star, Sparkles, ThumbsUp, ThumbsDown, RefreshCw } from 'lucide-react';
+import { Clock, Star, Sparkles, ThumbsUp, ThumbsDown } from 'lucide-react';
 
-const RecommendationScreen = ({ movie: rawMovie, onFeedback, onStartOver, onSendAgain, onGetAlternative }) => {
+const RecommendationScreen = ({ movie: rawMovie, onFeedback, onGetAlternative }) => {
   const [isLoading, setIsLoading] = useState(false);
   
   // Handle both Mongoose document and plain object cases
@@ -142,21 +142,7 @@ const RecommendationScreen = ({ movie: rawMovie, onFeedback, onStartOver, onSend
                   )}
                 </button>
                 
-                <button
-                  onClick={onStartOver}
-                  className="bg-white/20 hover:bg-white/30 text-white font-semibold py-3 px-6 rounded-xl transition-all flex items-center space-x-2"
-                >
-                  <RefreshCw className="w-5 h-5" />
-                  <span>Start Over</span>
-                </button>
 
-                <button
-                  onClick={onSendAgain}
-                  className="bg-white/20 hover:bg-white/30 text-white font-semibold py-3 px-6 rounded-xl transition-all flex items-center space-x-2"
-                >
-                  <RefreshCw className="w-5 h-5" />
-                  <span>Try Again</span>
-                </button>
               </div>
             </div>
           </div>

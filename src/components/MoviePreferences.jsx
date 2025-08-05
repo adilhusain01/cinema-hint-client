@@ -87,7 +87,7 @@ const MoviePreferences = ({ movies = [], preferences, setPreferences, onNext, is
           <Film className="w-10 h-10 text-white" />
         </div>
         <h2 className="text-2xl font-bold text-white mb-4">Preparing your movie selection</h2>
-        <p className="text-white/70 mb-6">Yayyy or Nayyy — rate your past watches below! (if any)</p>
+        <p className="text-white/70 mb-6">Just rate from these and we'll proceed further to curate your perfect movie match</p>
         <div className="w-full bg-white/20 rounded-full h-2">
           <div className="bg-gradient-to-r from-purple-500 to-blue-500 h-2 rounded-full animate-pulse w-1/2"></div>
         </div>
@@ -102,7 +102,7 @@ const MoviePreferences = ({ movies = [], preferences, setPreferences, onNext, is
           Rate these popular movies
         </h2>
         <p className="text-white/60 text-center mb-8 text-sm">
-          We'll use your ratings to find your perfect movie match
+        Yayyy or Nayyy — Rate your past watches from these (if any)
         </p>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

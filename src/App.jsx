@@ -308,8 +308,6 @@ function App() {
           <RecommendationScreen
             movie={recommendation}
             onFeedback={handleFeedback}
-            onStartOver={startOver}
-            onSendAgain={sendAgain}
             onGetAlternative={getAlternativeRecommendation}
           />
         )}
