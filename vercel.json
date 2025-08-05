@@ -57,10 +57,5 @@
         }
       ]
     }
-  ],
-  "functions": {
-    "server/index.js": {
-      "runtime": "nodejs18.x"
-    }
-  }
+  ]
 }
