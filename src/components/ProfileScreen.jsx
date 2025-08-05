@@ -47,6 +47,35 @@ const ProfileScreen = ({ user, onBack, onMovieClick }) => {
     fetchProfileData();
   };
 
+  // Helper functions to get deduplicated counts (matching component logic)
+  const getLikedMoviesCount = () => {
+    const movies = [];
+    Object.entries(profileData.likedMovies).forEach(([genre, genreMovies]) => {
+      if (Array.isArray(genreMovies)) {
+        genreMovies.forEach(movie => {
+          if (!movies.find(m => m.tmdbId === movie.tmdbId)) {
+            movies.push(movie);
+          }
+        });
+      }
+    });
+    return movies.length;
+  };
+
+  const getDislikedMoviesCount = () => {
+    const movies = [];
+    Object.entries(profileData.dislikedMovies).forEach(([genre, genreMovies]) => {
+      if (Array.isArray(genreMovies)) {
+        genreMovies.forEach(movie => {
+          if (!movies.find(m => m.tmdbId === movie.tmdbId)) {
+            movies.push(movie);
+          }
+        });
+      }
+    });
+    return movies.length;
+  };
+
   const tabs = [
     {
       id: 'watchlist',
@@ -58,13 +87,13 @@ const ProfileScreen = ({ user, onBack, onMovieClick }) => {
       id: 'liked',
       name: 'Liked Movies',
       icon: ThumbsUp,
-      count: Object.values(profileData.likedMovies).reduce((total, movies) => total + movies.length, 0)
+      count: getLikedMoviesCount()
     },
     {
       id: 'disliked',
       name: 'Disliked Movies',
       icon: ThumbsDown,
-      count: Object.values(profileData.dislikedMovies).reduce((total, movies) => total + movies.length, 0)
+      count: getDislikedMoviesCount()
     },
     {
       id: 'history',
@@ -76,8 +105,9 @@ const ProfileScreen = ({ user, onBack, onMovieClick }) => {
 
   if (loading) {
     return (
-      <div className="max-w-6xl mx-auto">
-        <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 p-4 sm:p-6 lg:p-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 sm:p-6 lg:p-8 min-h-[80vh]">
           <div className="flex items-center mb-6">
             <button
               onClick={onBack}
@@ -106,56 +136,87 @@ const ProfileScreen = ({ user, onBack, onMovieClick }) => {
             ))}
           </div>
         </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto">
-      <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 p-4 sm:p-6 lg:p-8">
+      <div className="max-w-6xl mx-auto">
+        <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 sm:p-6 lg:p-8 min-h-[80vh]">
         {/* Header */}
-        <div className="flex items-center mb-8">
+        <div className="flex items-center mb-6 sm:mb-8">
           <button
             onClick={onBack}
-            className="mr-4 p-2 text-white/70 hover:text-white transition-colors"
+            className="mr-3 p-2 text-white/70 hover:text-white transition-colors flex-shrink-0"
           >
-            <ArrowLeft className="w-6 h-6" />
+            <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
-          <div className="flex items-center">
-            <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center mr-4">
-              <User className="w-6 h-6 text-white" />
+          <div className="flex items-center min-w-0 flex-1">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+              <User className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-white" />
             </div>
-            <div>
-              <h1 className="text-3xl font-bold text-white">{user.name}'s Profile</h1>
-              <p className="text-white/70">Manage your movie preferences and history</p>
+            <div className="min-w-0 flex-1">
+              <h1 className="text-lg sm:text-xl lg:text-3xl font-bold text-white truncate">{user.name}</h1>
+              <p className="text-xs sm:text-sm text-white/70 mt-1 hidden sm:block">Manage your movie preferences and history</p>
             </div>
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="flex flex-wrap gap-2 mb-8 border-b border-white/20">
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center space-x-2 px-4 py-3 rounded-t-lg transition-all ${
-                  activeTab === tab.id
-                    ? 'bg-white/20 text-white border-b-2 border-purple-400'
-                    : 'text-white/70 hover:text-white hover:bg-white/10'
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-                <span className="font-medium">{tab.name}</span>
-                {tab.count > 0 && (
-                  <span className="bg-purple-600/50 text-white text-xs px-2 py-1 rounded-full">
-                    {tab.count}
-                  </span>
-                )}
-              </button>
-            );
-          })}
+        <div className="mb-6 sm:mb-8 border-b border-white/20">
+          {/* Mobile: Horizontal scrollable tabs */}
+          <div className="flex overflow-x-auto scrollbar-hide gap-1 pb-1 sm:hidden">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex flex-col items-center justify-center min-w-0 flex-shrink-0 px-3 py-2 rounded-t-lg transition-all whitespace-nowrap ${
+                    activeTab === tab.id
+                      ? 'bg-white/20 text-white border-b-2 border-purple-400'
+                      : 'text-white/70 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  <Icon className="w-4 h-4 mb-1" />
+                  <span className="text-xs font-medium">{tab.name.split(' ')[0]}</span>
+                  {tab.count > 0 && (
+                    <span className="bg-purple-600/70 text-white text-xs px-1.5 py-0.5 rounded-full mt-1 min-w-[18px] text-center">
+                      {tab.count}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+          
+          {/* Desktop: Normal flex layout */}
+          <div className="hidden sm:flex flex-wrap gap-2">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center space-x-2 px-4 py-3 rounded-t-lg transition-all ${
+                    activeTab === tab.id
+                      ? 'bg-white/20 text-white border-b-2 border-purple-400'
+                      : 'text-white/70 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span className="font-medium">{tab.name}</span>
+                  {tab.count > 0 && (
+                    <span className="bg-purple-600/50 text-white text-xs px-2 py-1 rounded-full">
+                      {tab.count}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Tab Content */}
@@ -191,6 +252,7 @@ const ProfileScreen = ({ user, onBack, onMovieClick }) => {
               onRefresh={refreshData}
             />
           )}
+        </div>
         </div>
       </div>
     </div>

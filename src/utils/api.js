@@ -45,9 +45,19 @@ export class ApiClient {
   // Auth methods
   async googleAuth(token) {
     try {
+      console.log('Sending token to server:', token ? 'Token present' : 'No token');
+      console.log('Token length:', token?.length);
+      console.log('Token preview:', token ? token.substring(0, 100) + '...' : 'N/A');
+      
+      const requestBody = { 
+        token,
+        credential: token // Send as both for compatibility
+      };
+      console.log('Request body keys:', Object.keys(requestBody));
+      
       const response = await this.request('/auth/google', {
         method: 'POST',
-        body: JSON.stringify({ token }),
+        body: JSON.stringify(requestBody),
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json'

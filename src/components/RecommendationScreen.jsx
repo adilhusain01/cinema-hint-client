@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, Star, Sparkles, ThumbsUp, ThumbsDown, ExternalLink, X, Heart } from 'lucide-react';
 import { ApiClient } from '../utils/api.js';
+import LoadingSpinner from './common/LoadingSpinner.jsx';
 
 const RecommendationScreen = ({ movie: rawMovie, onFeedback, onGetAlternative }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -127,176 +128,181 @@ const RecommendationScreen = ({ movie: rawMovie, onFeedback, onGetAlternative })
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="bg-white/10 backdrop-blur-lg rounded-2xl overflow-hidden">
-        {movieData.backdropPath && (
-          <div className="relative h-64 md:h-80">
-            <img 
-              src={movieData.backdropPath} 
-              alt={movieData.title}
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-          </div>
-        )}
-        
-        <div className="p-8">
-          <div className="flex flex-col md:flex-row gap-8">
-            {movieData.posterPath && (
-              <div className="flex-shrink-0">
-                <img 
-                  src={movieData.posterPath} 
-                  alt={movieData.title}
-                  className="w-48 h-72 object-cover rounded-xl mx-auto md:mx-0"
-                />
-              </div>
-            )}
-            
-            <div className="flex-1">
-              <h1 className="text-4xl font-bold text-white mb-4">{movieData.title}</h1>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 p-4 sm:p-6 lg:p-8">
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-lg rounded-2xl overflow-hidden border border-gray-700/50 shadow-2xl min-h-[80vh]">
+          {movieData.backdropPath && (
+            <div className="relative h-48 sm:h-56 md:h-64 lg:h-80">
+              <img 
+                src={movieData.backdropPath} 
+                alt={movieData.title}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+            </div>
+          )}
+          
+          <div className="p-4 sm:p-6 lg:p-8">
+            <div className="flex flex-col md:flex-row gap-4 sm:gap-6 lg:gap-8">
+              {movieData.posterPath && (
+                <div className="flex-shrink-0">
+                  <img 
+                    src={movieData.posterPath} 
+                    alt={movieData.title}
+                    className="w-32 h-48 sm:w-40 sm:h-60 md:w-48 md:h-72 object-cover rounded-xl mx-auto md:mx-0"
+                  />
+                </div>
+              )}
               
-              <div className="flex flex-wrap items-center gap-4 mb-6">
-                <span className="text-white/80">{movieData.year}</span>
-                {movieData.runtime && (
+              <div className="flex-1 min-w-0">
+                <h1 className="text-xl sm:text-2xl lg:text-4xl font-bold text-white mb-3 sm:mb-4 line-clamp-3">{movieData.title}</h1>
+                
+                <div className="flex flex-wrap items-center gap-3 sm:gap-4 mb-4 sm:mb-6 text-sm sm:text-base">
+                  <span className="text-white/80">{movieData.year}</span>
+                  {movieData.runtime && (
+                    <span className="flex items-center text-white/80">
+                      <Clock className="w-4 h-4 mr-1" />
+                      {movieData.runtime} min
+                    </span>
+                  )}
                   <span className="flex items-center text-white/80">
-                    <Clock className="w-4 h-4 mr-1" />
-                    {movieData.runtime} min
+                    <Star className="w-4 h-4 mr-1 text-yellow-400" />
+                    {movieData.rating?.toFixed(1)}
                   </span>
+                </div>
+                
+                <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-4 sm:mb-6">
+                  {movieData.genres?.map((genre) => (
+                    <span 
+                      key={genre}
+                      className="px-2 sm:px-3 py-1 bg-purple-600/50 text-white text-xs sm:text-sm rounded-full"
+                    >
+                      {genre}
+                    </span>
+                  ))}
+                </div>
+                
+                <p className="text-white/90 text-sm sm:text-base lg:text-lg mb-4 sm:mb-6 leading-relaxed">
+                  {movieData.overview}
+                </p>
+                
+                <div className="bg-white/5 rounded-xl p-3 sm:p-4 mb-4 sm:mb-6">
+                  <h3 className="text-white font-semibold mb-2 flex items-center text-sm sm:text-base">
+                    <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-yellow-400" />
+                    Why this movie?
+                  </h3>
+                  <p className="text-white/80 text-sm sm:text-base">{movieData.reason}</p>
+                </div>
+                
+                {movieData.director && (
+                  <p className="text-white/80 mb-2 text-sm sm:text-base">
+                    <strong>Director:</strong> {movieData.director}
+                  </p>
                 )}
-                <span className="flex items-center text-white/80">
-                  <Star className="w-4 h-4 mr-1 text-yellow-400" />
-                  {movieData.rating?.toFixed(1)}
-                </span>
+                
+                {movieData.cast?.length > 0 && (
+                  <p className="text-white/80 mb-4 sm:mb-6 text-sm sm:text-base">
+                    <strong>Cast:</strong> {movieData.cast.join(', ')}
+                  </p>
+                )}
+                
+                <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4">
+                  <button
+                    onClick={handleThumbsUp}
+                    className="group bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-2.5 sm:py-3 px-4 sm:px-6 rounded-xl transition-all transform hover:scale-105 hover:shadow-lg hover:shadow-green-500/30 flex items-center justify-center space-x-2 text-sm sm:text-base"
+                  >
+                    <ThumbsUp className="w-4 h-4 sm:w-5 sm:h-5 group-hover:rotate-12 transition-transform duration-200" />
+                    <span>Perfect!</span>
+                  </button>
+                  
+                  <button
+                    onClick={handleNotForMe}
+                    disabled={isLoading}
+                    className="group bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 disabled:from-red-600/50 disabled:to-red-700/50 disabled:cursor-not-allowed text-white font-semibold py-2.5 sm:py-3 px-4 sm:px-6 rounded-xl transition-all transform hover:scale-105 hover:shadow-lg hover:shadow-red-500/30 disabled:hover:scale-100 disabled:hover:shadow-none flex items-center justify-center space-x-2 text-sm sm:text-base"
+                  >
+                    {isLoading ? (
+                      <>
+                        <LoadingSpinner size="small" variant="minimal" />
+                        <span className="hidden sm:inline">Getting Alternative...</span>
+                        <span className="sm:hidden">Getting...</span>
+                      </>
+                    ) : (
+                      <>
+                        <ThumbsDown className="w-4 h-4 sm:w-5 sm:h-5" />
+                        <span>Not for me</span>
+                      </>
+                    )}
+                  </button>
+                  
+                  <button
+                    onClick={toggleWatchlist}
+                    disabled={watchlistLoading}
+                    className={`${
+                      isInWatchlist 
+                        ? 'bg-pink-600 hover:bg-pink-700' 
+                        : 'bg-gray-600 hover:bg-gray-700'
+                    } disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-2.5 sm:py-3 px-4 sm:px-6 rounded-xl transition-all transform hover:scale-105 flex items-center justify-center space-x-2 text-sm sm:text-base`}
+                  >
+                    {watchlistLoading ? (
+                      <>
+                        <LoadingSpinner size="small" variant="minimal" />
+                        <span>Saving...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Heart className={`w-4 h-4 sm:w-5 sm:h-5 ${isInWatchlist ? 'fill-white' : ''}`} />
+                        <span className="hidden sm:inline">{isInWatchlist ? 'In Watchlist' : 'Add to Watchlist'}</span>
+                        <span className="sm:hidden">{isInWatchlist ? 'Added' : 'Add'}</span>
+                      </>
+                    )}
+                  </button>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      
+        
+        {/* Platform Links Popup */}
+        {showPlatformPopup && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-3 sm:p-4">
+            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 sm:p-6 w-full max-w-xs sm:max-w-md mx-3">
+              <div className="flex justify-between items-start mb-4 sm:mb-6 gap-2">
+                <h2 className="text-base sm:text-lg lg:text-2xl font-bold text-white line-clamp-2 flex-1 min-w-0">Watch "{movieData.title}"</h2>
+                <button
+                  onClick={() => setShowPlatformPopup(false)}
+                  className="text-white/70 hover:text-white p-1 flex-shrink-0"
+                >
+                  <X className="w-5 h-5 sm:w-6 sm:h-6" />
+                </button>
               </div>
               
-              <div className="flex flex-wrap gap-2 mb-6">
-                {movieData.genres?.map((genre) => (
-                  <span 
-                    key={genre}
-                    className="px-3 py-1 bg-purple-600/50 text-white text-sm rounded-full"
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                {platformLinks.map((platform) => (
+                  <a
+                    key={platform.name}
+                    href={platform.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`${platform.color} text-white font-semibold py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl transition-all transform hover:scale-105 flex items-center justify-center space-x-1 sm:space-x-2 text-xs sm:text-sm lg:text-base min-w-0`}
                   >
-                    {genre}
-                  </span>
+                    <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                    <span className="truncate">{platform.name}</span>
+                  </a>
                 ))}
               </div>
               
-              <p className="text-white/90 text-lg mb-6 leading-relaxed">
-                {movieData.overview}
-              </p>
-              
-              <div className="bg-white/5 rounded-xl p-4 mb-6">
-                <h3 className="text-white font-semibold mb-2 flex items-center">
-                  <Sparkles className="w-5 h-5 mr-2 text-yellow-400" />
-                  Why this movie?
-                </h3>
-                <p className="text-white/80">{movieData.reason}</p>
-              </div>
-              
-              {movieData.director && (
-                <p className="text-white/80 mb-2">
-                  <strong>Director:</strong> {movieData.director}
-                </p>
-              )}
-              
-              {movieData.cast?.length > 0 && (
-                <p className="text-white/80 mb-6">
-                  <strong>Cast:</strong> {movieData.cast.join(', ')}
-                </p>
-              )}
-              
-              <div className="flex flex-wrap gap-4">
-                <button
-                  onClick={handleThumbsUp}
-                  className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-xl transition-all transform hover:scale-105 flex items-center space-x-2"
-                >
-                  <ThumbsUp className="w-5 h-5" />
-                  <span>Perfect!</span>
-                </button>
-                
-                <button
-                  onClick={handleNotForMe}
-                  disabled={isLoading}
-                  className="bg-red-600 hover:bg-red-700 disabled:bg-red-600/50 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-xl transition-all transform hover:scale-105 flex items-center space-x-2"
-                >
-                  {isLoading ? (
-                    <>
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                      <span>Getting Alternative...</span>
-                    </>
-                  ) : (
-                    <>
-                      <ThumbsDown className="w-5 h-5" />
-                      <span>Not for me</span>
-                    </>
-                  )}
-                </button>
-                
-                <button
-                  onClick={toggleWatchlist}
-                  disabled={watchlistLoading}
-                  className={`${
-                    isInWatchlist 
-                      ? 'bg-pink-600 hover:bg-pink-700' 
-                      : 'bg-gray-600 hover:bg-gray-700'
-                  } disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-xl transition-all transform hover:scale-105 flex items-center space-x-2`}
-                >
-                  {watchlistLoading ? (
-                    <>
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                      <span>Saving...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Heart className={`w-5 h-5 ${isInWatchlist ? 'fill-white' : ''}`} />
-                      <span>{isInWatchlist ? 'In Watchlist' : 'Add to Watchlist'}</span>
-                    </>
-                  )}
-                </button>
-
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      {/* Platform Links Popup */}
-      {showPlatformPopup && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 w-full max-w-md">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-white">Watch "{movieData.title}"</h2>
               <button
                 onClick={() => setShowPlatformPopup(false)}
-                className="text-white/70 hover:text-white p-1"
+                className="w-full mt-3 sm:mt-4 bg-white/10 hover:bg-white/20 text-white font-semibold py-2.5 sm:py-3 px-4 rounded-xl transition-all text-sm sm:text-base"
               >
-                <X className="w-6 h-6" />
+                Close
               </button>
             </div>
-            
-            <div className="grid grid-cols-2 gap-3">
-              {platformLinks.map((platform) => (
-                <a
-                  key={platform.name}
-                  href={platform.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`${platform.color} text-white font-semibold py-3 px-4 rounded-xl transition-all transform hover:scale-105 flex items-center justify-center space-x-2`}
-                >
-                  <ExternalLink className="w-4 h-4" />
-                  <span>{platform.name}</span>
-                </a>
-              ))}
-            </div>
-            
-            <button
-              onClick={() => setShowPlatformPopup(false)}
-              className="w-full mt-4 bg-white/10 hover:bg-white/20 text-white font-semibold py-3 px-4 rounded-xl transition-all"
-            >
-              Close
-            </button>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

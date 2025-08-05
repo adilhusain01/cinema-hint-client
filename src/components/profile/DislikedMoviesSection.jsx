@@ -4,6 +4,7 @@ import { ApiClient } from '../../utils/api.js';
 
 const DislikedMoviesSection = ({ dislikedMovies, onMovieClick, onRefresh }) => {
   const [loading, setLoading] = useState({});
+  const [imageErrors, setImageErrors] = useState({});
   const apiClient = new ApiClient();
 
   // Convert Map-based structure to flat array
@@ -26,6 +27,11 @@ const DislikedMoviesSection = ({ dislikedMovies, onMovieClick, onRefresh }) => {
   };
 
   const allDislikedMovies = getAllDislikedMovies();
+
+  // Handle image loading errors
+  const handleImageError = (movieId) => {
+    setImageErrors(prev => ({ ...prev, [movieId]: true }));
+  };
 
   const removeFromDisliked = async (movie) => {
     if (loading[movie.tmdbId]) return;
@@ -77,28 +83,35 @@ const DislikedMoviesSection = ({ dislikedMovies, onMovieClick, onRefresh }) => {
   }
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-semibold text-white">
-          Disliked Movies ({allDislikedMovies.length})
-        </h3>
-      </div>
+
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-6">
         {allDislikedMovies.map((movie) => (
           <div key={movie.tmdbId} className="bg-white/5 rounded-xl overflow-hidden group">
             <div className="relative">
-              {movie.posterPath ? (
+              {movie.posterPath && !imageErrors[movie.tmdbId] ? (
                 <img 
                   src={movie.posterPath} 
                   alt={movie.title}
-                  className="w-full h-64 object-cover cursor-pointer opacity-75"
+                  className="w-full h-48 sm:h-56 md:h-64 object-cover cursor-pointer opacity-75"
                   onClick={() => onMovieClick(movie.tmdbId)}
+                  onError={() => handleImageError(movie.tmdbId)}
+                  onLoad={() => {
+                    // Remove from error state if image loads successfully after an error
+                    setImageErrors(prev => {
+                      const updated = { ...prev };
+                      delete updated[movie.tmdbId];
+                      return updated;
+                    });
+                  }}
                 />
               ) : (
-                <div className="w-full h-64 bg-gradient-to-br from-red-500/20 to-pink-500/20 flex items-center justify-center cursor-pointer"
+                <div className="w-full h-48 sm:h-56 md:h-64 bg-gradient-to-br from-red-500/20 to-pink-500/20 flex items-center justify-center cursor-pointer"
                      onClick={() => onMovieClick(movie.tmdbId)}>
-                  <ThumbsDown className="w-12 h-12 text-red-400" />
+                  <div className="text-center">
+                    <ThumbsDown className="w-12 h-12 text-red-400 mx-auto mb-2" />
+                    <p className="text-red-300 text-sm px-2">{movie.title}</p>
+                  </div>
                 </div>
               )}
               <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -158,7 +171,6 @@ const DislikedMoviesSection = ({ dislikedMovies, onMovieClick, onRefresh }) => {
           </div>
         ))}
       </div>
-    </div>
   );
 };
 

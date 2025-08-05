@@ -33,14 +33,7 @@ const WatchlistSection = ({ watchlist, onMovieClick, onRefresh }) => {
   }
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-semibold text-white">
-          Movies to Watch ({watchlist.length})
-        </h3>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-6">
         {watchlist.map((movie) => (
           <div key={movie.tmdbId} className="bg-white/5 rounded-xl overflow-hidden group hover:scale-105 transition-transform">
             <div className="relative">
@@ -48,7 +41,7 @@ const WatchlistSection = ({ watchlist, onMovieClick, onRefresh }) => {
                 <img 
                   src={movie.posterPath} 
                   alt={movie.title}
-                  className="w-full h-64 object-cover cursor-pointer"
+                  className="w-full h-48 sm:h-56 md:h-64 object-cover cursor-pointer"
                   onClick={() => onMovieClick(movie.tmdbId)}
                 />
               )}
@@ -64,14 +57,14 @@ const WatchlistSection = ({ watchlist, onMovieClick, onRefresh }) => {
                 )}
               </button>
             </div>
-            <div className="p-4">
+            <div className="p-2 sm:p-3 lg:p-4">
               <h4 
-                className="text-white font-semibold mb-2 line-clamp-2 cursor-pointer hover:text-purple-300 transition-colors"
+                className="text-white font-semibold mb-1 sm:mb-2 line-clamp-2 cursor-pointer hover:text-purple-300 transition-colors text-sm sm:text-base"
                 onClick={() => onMovieClick(movie.tmdbId)}
               >
                 {movie.title}
               </h4>
-              <div className="flex items-center justify-between text-white/60 text-sm mb-2">
+              <div className="flex items-center justify-between text-white/60 text-xs sm:text-sm mb-1 sm:mb-2">
                 <span>{movie.year}</span>
                 {movie.rating && (
                   <span className="flex items-center">
@@ -79,16 +72,16 @@ const WatchlistSection = ({ watchlist, onMovieClick, onRefresh }) => {
                   </span>
                 )}
               </div>
-              <div className="flex items-center text-white/50 text-xs">
+              <div className="flex items-center text-white/50 text-xs hidden sm:flex">
                 <Calendar className="w-3 h-3 mr-1" />
                 <span>Added {new Date(movie.addedAt).toLocaleDateString()}</span>
               </div>
               {movie.genres && movie.genres.length > 0 && (
-                <div className="flex flex-wrap gap-1 mt-2">
+                <div className="flex flex-wrap gap-1 mt-1 sm:mt-2">
                   {movie.genres.slice(0, 2).map((genre) => (
                     <span 
                       key={genre}
-                      className="px-2 py-1 bg-purple-600/30 text-white text-xs rounded-full"
+                      className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-purple-600/30 text-white text-xs rounded-full"
                     >
                       {genre}
                     </span>
@@ -99,7 +92,6 @@ const WatchlistSection = ({ watchlist, onMovieClick, onRefresh }) => {
           </div>
         ))}
       </div>
-    </div>
   );
 };
 

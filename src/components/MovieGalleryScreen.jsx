@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Heart, Star, Clock, Search, Film } from 'lucide-react';
 import { ApiClient } from '../utils/api.js';
 
-const MovieGalleryScreen = ({ onBack, onMovieClick }) => {
+const MovieGalleryScreen = ({ onBack, onMovieClick, user = null }) => {
+  const isAuthenticated = !!user;
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [watchlistStatus, setWatchlistStatus] = useState({});
@@ -14,6 +15,16 @@ const MovieGalleryScreen = ({ onBack, onMovieClick }) => {
   useEffect(() => {
     fetchMovies();
   }, []);
+
+  // Re-fetch watchlist statuses when user auth state changes
+  useEffect(() => {
+    if (isAuthenticated && movies.length > 0) {
+      checkWatchlistStatuses(movies);
+    } else if (!isAuthenticated) {
+      // Clear watchlist status for non-authenticated users
+      setWatchlistStatus({});
+    }
+  }, [isAuthenticated, movies.length]);
 
   useEffect(() => {
     // Filter movies based on search query
@@ -35,8 +46,10 @@ const MovieGalleryScreen = ({ onBack, onMovieClick }) => {
       setMovies(data);
       setFilteredMovies(data);
       
-      // Check watchlist status for all movies
-      await checkWatchlistStatuses(data);
+      // Check watchlist status for all movies (only if authenticated)
+      if (isAuthenticated) {
+        await checkWatchlistStatuses(data);
+      }
     } catch (error) {
       console.error('Error fetching movies:', error);
     } finally {
@@ -87,8 +100,9 @@ const MovieGalleryScreen = ({ onBack, onMovieClick }) => {
 
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto">
-        <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 p-4 sm:p-6 lg:p-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 sm:p-6 lg:p-8 min-h-[80vh]">
           <div className="flex items-center mb-6">
             <button
               onClick={onBack}
@@ -101,16 +115,17 @@ const MovieGalleryScreen = ({ onBack, onMovieClick }) => {
           
           <div className="h-12 bg-white/10 rounded w-96 mb-8 animate-pulse"></div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 lg:gap-6">
             {[...Array(20)].map((_, i) => (
               <div key={i} className="bg-white/5 rounded-xl overflow-hidden animate-pulse">
                 <div className="w-full h-64 bg-white/10"></div>
-                <div className="p-4">
+                <div className="p-2 sm:p-3 lg:p-4">
                   <div className="h-6 bg-white/10 rounded w-3/4 mb-3"></div>
                   <div className="h-4 bg-white/10 rounded w-1/2"></div>
                 </div>
               </div>
             ))}
+          </div>
           </div>
         </div>
       </div>
@@ -118,30 +133,31 @@ const MovieGalleryScreen = ({ onBack, onMovieClick }) => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto">
-      <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 p-4 sm:p-6 lg:p-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 sm:p-6 lg:p-8 min-h-[80vh]">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center">
+        <div className="flex items-center justify-between mb-6 sm:mb-8">
+          <div className="flex items-center min-w-0 flex-1">
             <button
               onClick={onBack}
-              className="mr-4 p-2 text-white/70 hover:text-white transition-colors"
+              className="mr-3 p-2 text-white/70 hover:text-white transition-colors flex-shrink-0"
             >
-              <ArrowLeft className="w-6 h-6" />
+              <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
-            <div className="flex items-center">
-              <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center mr-4">
-                <Film className="w-6 h-6 text-white" />
+            <div className="flex items-center min-w-0 flex-1">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                <Film className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-white" />
               </div>
-              <div>
-                <h1 className="text-3xl font-bold text-white">Movie Gallery</h1>
-                <p className="text-white/70">Discover movies from our database</p>
+              <div className="min-w-0 flex-1">
+                <h1 className="text-lg sm:text-xl lg:text-3xl font-bold text-white truncate">Movie Gallery</h1>
+                <p className="text-xs sm:text-sm text-white/70 mt-1 hidden sm:block">Discover movies from our database</p>
               </div>
             </div>
           </div>
           
-          <div className="text-white/60">
-            {filteredMovies.length} movie{filteredMovies.length !== 1 ? 's' : ''}
+          <div className="text-white/60 text-xs sm:text-sm ml-3 flex-shrink-0">
+            {filteredMovies.length}
           </div>
         </div>
 
@@ -176,7 +192,7 @@ const MovieGalleryScreen = ({ onBack, onMovieClick }) => {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 lg:gap-6">
             {filteredMovies.map((movie) => (
               <div key={movie.tmdbId} className="bg-white/5 rounded-xl overflow-hidden group hover:scale-105 transition-transform">
                 <div className="relative">
@@ -184,34 +200,37 @@ const MovieGalleryScreen = ({ onBack, onMovieClick }) => {
                     <img 
                       src={movie.posterPath} 
                       alt={movie.title}
-                      className="w-full h-64 object-cover cursor-pointer"
+                      className="w-full h-48 sm:h-56 md:h-64 object-cover cursor-pointer"
                       onClick={() => onMovieClick(movie.tmdbId)}
                     />
                   ) : (
                     <div 
-                      className="w-full h-64 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center cursor-pointer"
+                      className="w-full h-48 sm:h-56 md:h-64 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center cursor-pointer"
                       onClick={() => onMovieClick(movie.tmdbId)}
                     >
                       <Film className="w-12 h-12 text-indigo-400" />
                     </div>
                   )}
-                  <button
-                    onClick={() => toggleWatchlist(movie)}
-                    disabled={watchlistLoading[movie.tmdbId]}
-                    className={`absolute top-2 right-2 p-2 backdrop-blur-sm rounded-full transition-all opacity-0 group-hover:opacity-100 ${
-                      watchlistStatus[movie.tmdbId]
-                        ? 'bg-pink-500/50 text-pink-100 hover:text-pink-200'
-                        : 'bg-black/50 text-white/80 hover:text-pink-400 hover:bg-pink-500/20'
-                    } ${watchlistLoading[movie.tmdbId] ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  >
-                    {watchlistLoading[movie.tmdbId] ? (
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                    ) : (
-                      <Heart className={`w-4 h-4 ${watchlistStatus[movie.tmdbId] ? 'fill-current' : ''}`} />
-                    )}
-                  </button>
+                  {/* Watchlist button - only for authenticated users */}
+                  {isAuthenticated && (
+                    <button
+                      onClick={() => toggleWatchlist(movie)}
+                      disabled={watchlistLoading[movie.tmdbId]}
+                      className={`absolute top-2 right-2 p-2 backdrop-blur-sm rounded-full transition-all opacity-0 group-hover:opacity-100 ${
+                        watchlistStatus[movie.tmdbId]
+                          ? 'bg-pink-500/50 text-pink-100 hover:text-pink-200'
+                          : 'bg-black/50 text-white/80 hover:text-pink-400 hover:bg-pink-500/20'
+                      } ${watchlistLoading[movie.tmdbId] ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                      {watchlistLoading[movie.tmdbId] ? (
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      ) : (
+                        <Heart className={`w-4 h-4 ${watchlistStatus[movie.tmdbId] ? 'fill-current' : ''}`} />
+                      )}
+                    </button>
+                  )}
                 </div>
-                <div className="p-4">
+                <div className="p-2 sm:p-3 lg:p-4">
                   <h3 
                     className="text-white font-semibold mb-2 line-clamp-2 cursor-pointer hover:text-purple-300 transition-colors"
                     onClick={() => onMovieClick(movie.tmdbId)}
@@ -251,6 +270,7 @@ const MovieGalleryScreen = ({ onBack, onMovieClick }) => {
             ))}
           </div>
         )}
+        </div>
       </div>
     </div>
   );

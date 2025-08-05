@@ -40,8 +40,9 @@ const WatchlistScreen = ({ onBack, onMovieClick }) => {
 
   if (loading) {
     return (
-      <div className="max-w-6xl mx-auto">
-        <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 p-4 sm:p-6 lg:p-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 sm:p-6 lg:p-8 min-h-[80vh]">
           <div className="flex items-center mb-6">
             <button
               onClick={onBack}
@@ -52,16 +53,17 @@ const WatchlistScreen = ({ onBack, onMovieClick }) => {
             <h1 className="text-3xl font-bold text-white">My Watchlist</h1>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-6">
             {[...Array(8)].map((_, i) => (
               <div key={i} className="bg-white/5 rounded-xl overflow-hidden animate-pulse">
                 <div className="w-full h-64 bg-white/10"></div>
-                <div className="p-4">
+                <div className="p-2 sm:p-3 lg:p-4">
                   <div className="h-6 bg-white/10 rounded w-3/4 mb-3"></div>
                   <div className="h-4 bg-white/10 rounded w-1/2"></div>
                 </div>
               </div>
             ))}
+          </div>
           </div>
         </div>
       </div>
@@ -70,8 +72,9 @@ const WatchlistScreen = ({ onBack, onMovieClick }) => {
 
   if (watchlist.length === 0) {
     return (
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 p-4 sm:p-6 lg:p-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 sm:p-6 lg:p-8 min-h-[80vh]">
           <div className="flex items-center mb-6">
             <button
               onClick={onBack}
@@ -79,7 +82,10 @@ const WatchlistScreen = ({ onBack, onMovieClick }) => {
             >
               <ArrowLeft className="w-6 h-6" />
             </button>
-            <h1 className="text-3xl font-bold text-white">My Watchlist</h1>
+            <div className="min-w-0 flex-1">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white truncate">My Watchlist</h1>
+              <p className="text-xs sm:text-sm text-white/70 mt-1 hidden sm:block">Your saved movies to watch later</p>
+            </div>
           </div>
           
           <div className="text-center py-16">
@@ -95,28 +101,35 @@ const WatchlistScreen = ({ onBack, onMovieClick }) => {
               Browse Movies
             </button>
           </div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto">
-      <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8">
-        <div className="flex items-center mb-6">
-          <button
-            onClick={onBack}
-            className="mr-4 p-2 text-white/70 hover:text-white transition-colors"
-          >
-            <ArrowLeft className="w-6 h-6" />
-          </button>
-          <h1 className="text-3xl font-bold text-white">My Watchlist</h1>
-          <span className="ml-4 px-3 py-1 bg-purple-600/50 text-white text-sm rounded-full">
-            {watchlist.length} movie{watchlist.length !== 1 ? 's' : ''}
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 p-4 sm:p-6 lg:p-8">
+      <div className="max-w-6xl mx-auto">
+        <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 sm:p-6 lg:p-8 min-h-[80vh]">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center min-w-0 flex-1">
+            <button
+              onClick={onBack}
+              className="mr-3 p-2 text-white/70 hover:text-white transition-colors flex-shrink-0"
+            >
+              <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+            </button>
+            <div className="min-w-0 flex-1">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white truncate">My Watchlist</h1>
+              <p className="text-xs sm:text-sm text-white/70 mt-1 hidden sm:block">Your saved movies to watch later</p>
+            </div>
+          </div>
+          <span className="ml-3 px-2 sm:px-3 py-1 bg-purple-600/50 text-white text-xs sm:text-sm rounded-full flex-shrink-0">
+            {watchlist.length}
           </span>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-6">
           {watchlist.map((movie) => (
             <div key={movie.tmdbId} className="bg-white/5 rounded-xl overflow-hidden group hover:scale-105 transition-transform">
               <div className="relative">
@@ -124,7 +137,7 @@ const WatchlistScreen = ({ onBack, onMovieClick }) => {
                   <img 
                     src={movie.posterPath} 
                     alt={movie.title}
-                    className="w-full h-64 object-cover cursor-pointer"
+                    className="w-full h-48 sm:h-56 md:h-64 object-cover cursor-pointer"
                     onClick={() => onMovieClick(movie.tmdbId)}
                   />
                 )}
@@ -140,7 +153,7 @@ const WatchlistScreen = ({ onBack, onMovieClick }) => {
                   )}
                 </button>
               </div>
-              <div className="p-4">
+              <div className="p-2 sm:p-3 lg:p-4">
                 <h3 
                   className="text-white font-semibold mb-2 line-clamp-2 cursor-pointer hover:text-purple-300 transition-colors"
                   onClick={() => onMovieClick(movie.tmdbId)}
@@ -170,6 +183,7 @@ const WatchlistScreen = ({ onBack, onMovieClick }) => {
               </div>
             </div>
           ))}
+        </div>
         </div>
       </div>
     </div>

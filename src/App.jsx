@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ApiClient } from './utils/api.js';
+import { Play, Sparkles, ChevronRight } from 'lucide-react';
 import AuthScreen from './components/AuthScreen.jsx';
 import Header from './components/Header.jsx';
 import WelcomeScreen from './components/WelcomeScreen.jsx';
@@ -14,6 +15,7 @@ import WatchlistScreen from './components/WatchlistScreen.jsx';
 import MovieDetailsScreen from './components/MovieDetailsScreen.jsx';
 import ProfileScreen from './components/ProfileScreen.jsx';
 import MovieGalleryScreen from './components/MovieGalleryScreen.jsx';
+import LoadingSpinner from './components/common/LoadingSpinner.jsx';
 
 // Initialize API client
 const apiClient = new ApiClient();
@@ -22,6 +24,7 @@ const apiClient = new ApiClient();
 const useGoogleAuth = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [authError, setAuthError] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -34,41 +37,115 @@ const useGoogleAuth = () => {
 
   const fetchUserProfile = async () => {
     try {
+      setAuthError(null); // Clear any previous errors
       const userData = await apiClient.getUserProfile();
       setUser(userData);
     } catch (error) {
       console.error('Error fetching profile:', error);
+      setAuthError('Session expired. Please sign in again.');
       localStorage.removeItem('token');
+      setUser(null);
     } finally {
       setLoading(false);
     }
   };
 
   const signInWithGoogle = () => {
-    window.google?.accounts.id.prompt();
+    console.log('Sign in with Google triggered');
+    if (window.google?.accounts?.id) {
+      console.log('Prompting Google Sign-In...');
+      window.google.accounts.id.prompt((notification) => {
+        console.log('Google Sign-In prompt result:', notification);
+        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+          console.log('Google Sign-In prompt was not displayed or skipped');
+          // Fallback: try to render a button inline
+          renderGoogleSignInButton();
+        }
+      });
+    } else {
+      console.error('Google Sign-In not loaded yet');
+      setAuthError('Google Sign-In is not ready. Please refresh the page.');
+    }
+  };
+
+  const renderGoogleSignInButton = () => {
+    console.log('Rendering Google Sign-In button as fallback');
+    if (window.google?.accounts?.id) {
+      const buttonContainer = document.getElementById('google-signin-button');
+      if (buttonContainer) {
+        window.google.accounts.id.renderButton(buttonContainer, {
+          theme: 'outline',
+          size: 'large',
+          type: 'standard',
+          text: 'signin_with',
+          shape: 'rectangular',
+          logo_alignment: 'left',
+          width: 300
+        });
+      }
+    }
   };
 
   const handleGoogleResponse = async (response) => {
     try {
-      const data = await apiClient.googleAuth(response.credential);
+      console.log('Google response received:', response);
+      console.log('Response keys:', Object.keys(response || {}));
+      console.log('Credential present:', !!response?.credential);
+      setAuthError(null);
+      
+      if (!response) {
+        throw new Error('No response received from Google');
+      }
+      
+      // Try different possible token fields
+      const token = response.credential || response.token || response.id_token;
+      if (!token) {
+        console.error('No token found in response:', response);
+        throw new Error('No credential received from Google');
+      }
+      
+      console.log('Using token:', token.substring(0, 50) + '...');
+      const data = await apiClient.googleAuth(token);
       localStorage.setItem('token', data.token);
       setUser(data.user);
     } catch (error) {
       console.error('Google auth error:', error);
+      setAuthError('Authentication failed. Please try again.');
     }
   };
 
   const signOut = () => {
     localStorage.removeItem('token');
     setUser(null);
+    setAuthError(null);
   };
 
-  return { user, loading, signInWithGoogle, signOut, handleGoogleResponse };
+  // Function to re-verify authentication
+  const verifyAuth = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setUser(null);
+      return false;
+    }
+    
+    try {
+      const userData = await apiClient.getUserProfile();
+      setUser(userData);
+      return true;
+    } catch (error) {
+      localStorage.removeItem('token');
+      setUser(null);
+      setAuthError('Session expired. Please sign in again.');
+      return false;
+    }
+  };
+
+  return { user, loading, authError, signInWithGoogle, signOut, handleGoogleResponse, verifyAuth };
 };
 
 // Main App Component
 function App() {
-  const { user, loading, signInWithGoogle, signOut, handleGoogleResponse } = useGoogleAuth();
+  const { user, loading, authError, signInWithGoogle, signOut, handleGoogleResponse, verifyAuth } = useGoogleAuth();
   const [currentStep, setCurrentStep] = useState('welcome');
   const [preferences, setPreferences] = useState({
     genres: [],
@@ -90,13 +167,15 @@ function App() {
     const initGoogleAuth = () => {
       try {
         if (window.google?.accounts?.id) {
+          console.log('Initializing Google Sign-In with client ID:', import.meta.env.VITE_GOOGLE_CLIENT_ID);
           window.google.accounts.id.initialize({
             client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
             callback: handleGoogleResponse,
             auto_select: false,
             cancel_on_tap_outside: true,
-            prompt_parent_id: 'google-signin'
+            use_fedcm_for_prompt: false
           });
+          console.log('Google Sign-In initialized successfully');
         }
       } catch (error) {
         console.error('Error initializing Google Sign-In:', error);
@@ -113,11 +192,18 @@ function App() {
     if (window.google) {
       initGoogleAuth();
     } else {
+      console.log('Loading Google Sign-In script...');
       const script = document.createElement('script');
       script.src = 'https://accounts.google.com/gsi/client';
       script.async = true;
       script.defer = true;
-      script.onload = initGoogleAuth;
+      script.onload = () => {
+        console.log('Google Sign-In script loaded');
+        initGoogleAuth();
+      };
+      script.onerror = (error) => {
+        console.error('Failed to load Google Sign-In script:', error);
+      };
       document.head.appendChild(script);
     }
 
@@ -150,19 +236,28 @@ function App() {
     }
   };
 
-  // Get recommendation
+  // Get recommendation with auth verification
   const getRecommendation = async () => {
-    if (!user) return;
-    setError(null); 
+    // Verify authentication before proceeding
+    const isAuthenticated = await verifyAuth();
+    if (!isAuthenticated) {
+      setCurrentStep('welcome');
+      return;
+    }
     
+    setError(null); 
     setIsLoading(true);
     try {
       const movie = await apiClient.getRecommendation(preferences);
       setRecommendation(movie);
       setCurrentStep('recommendation');
-      
     } catch (error) {
       console.error('Error getting recommendation:', error);
+      if (error.message.includes('401') || error.message.includes('unauthorized')) {
+        // Session expired, redirect to auth
+        await verifyAuth();
+        return;
+      }
       setError(error.message);
       setCurrentStep('error');
     } finally {
@@ -172,9 +267,14 @@ function App() {
 
   // Get alternative recommendation (replaces current movie)
   const getAlternativeRecommendation = async () => {
-    if (!user) return;
-    setError(null);
+    // Verify authentication before proceeding
+    const isAuthenticated = await verifyAuth();
+    if (!isAuthenticated) {
+      setCurrentStep('welcome');
+      return;
+    }
     
+    setError(null);
     setIsLoading(true);
     setCurrentStep('processing'); // Show processing screen while getting alternative
     
@@ -184,6 +284,11 @@ function App() {
       setCurrentStep('recommendation');
     } catch (error) {
       console.error('Error getting alternative recommendation:', error);
+      if (error.message.includes('401') || error.message.includes('unauthorized')) {
+        // Session expired, redirect to auth
+        await verifyAuth();
+        return;
+      }
       setError(error.message);
       setCurrentStep('error');
     } finally {
@@ -217,9 +322,8 @@ function App() {
     }
   };
 
-  // Reset flow
-  const startOver = () => {
-    setCurrentStep('welcome');
+  // Clear all user selections and reset flow
+  const clearSelections = () => {
     setPreferences({
       genres: [],
       likedMovies: [],
@@ -229,6 +333,26 @@ function App() {
       dealBreakers: []
     });
     setRecommendation(null);
+    setError(null);
+    setPopularMovies([]);
+  };
+
+  // Reset flow
+  const startOver = () => {
+    setCurrentStep('welcome');
+    clearSelections();
+  };
+
+  // Handle logo click - go to home and clear selections
+  const handleLogoClick = () => {
+    setCurrentStep('welcome');
+    clearSelections();
+  };
+
+  // Enhanced signOut function that clears selections
+  const handleSignOut = () => {
+    clearSelections();
+    signOut();
   };
 
   const sendAgain = () => {
@@ -290,24 +414,32 @@ function App() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return <AuthScreen onSignIn={signInWithGoogle} />;
+    return <LoadingSpinner variant="fullscreen" text="Initializing your movie experience..." />;
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
-      <Header user={user} onSignOut={signOut} onStartOver={startOver} onWatchlistClick={goToWatchlist} onProfileClick={goToProfile} onGalleryClick={goToGallery} />
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 overflow-x-hidden w-full max-w-full">
+      <Header 
+        user={user} 
+        onSignOut={handleSignOut} 
+        onStartOver={startOver} 
+        onWatchlistClick={goToWatchlist} 
+        onProfileClick={goToProfile} 
+        onGalleryClick={goToGallery}
+        onLogoClick={handleLogoClick}
+        onSignIn={signInWithGoogle}
+      />
       
-      <div className="container mx-auto px-4 py-8">
+      <div className={user ? "container mx-auto max-w-full overflow-x-hidden" : "max-w-full overflow-x-hidden"}>
         {currentStep === 'welcome' && (
-          <WelcomeScreen onNext={() => setCurrentStep('genres')} />
+          <WelcomeScreen 
+            user={user}
+            onNext={() => setCurrentStep('genres')}
+            onSignIn={signInWithGoogle}
+            onSignOut={handleSignOut}
+            authError={authError}
+            isLoading={loading}
+          />
         )}
         
         {currentStep === 'genres' && (
@@ -326,6 +458,7 @@ function App() {
             movies={popularMovies}
             preferences={preferences}
             setPreferences={setPreferences}
+            isLoading={isLoading}
             onNext={() =>{
               updatePreferences(preferences);
             setCurrentStep('context')}
@@ -368,11 +501,13 @@ function App() {
           <ErrorScreen
             error={error}
             onStartOver={startOver}
+            onGallery={goToGallery}
           />
         )}
 
         {currentStep === 'gallery' && (
           <MovieGalleryScreen
+            user={user}
             onBack={goBackFromGallery}
             onMovieClick={goToMovieDetailsFromGallery}
           />

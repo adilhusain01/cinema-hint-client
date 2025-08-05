@@ -33,46 +33,50 @@ const RecommendationHistorySection = ({ history, onMovieClick }) => {
   };
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-semibold text-white">
-          Recommendation History ({history.length})
-        </h3>
-      </div>
-      
-      <div className="space-y-4">
+    <div>  
+      <div className="space-y-3 sm:space-y-4">
         {history.map((recommendation, index) => (
           <div 
             key={`${recommendation.movieId}-${index}`}
-            className="bg-white/5 rounded-xl p-4 hover:bg-white/10 transition-colors"
+            className="bg-white/5 rounded-xl p-3 sm:p-4 hover:bg-white/10 transition-colors"
           >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
-                  <Film className="w-6 h-6 text-white" />
+            <div className="flex items-start sm:items-center justify-between gap-3">
+              <div className="flex items-start sm:items-center space-x-3 sm:space-x-4 min-w-0 flex-1">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Film className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
-                <div>
+                <div className="min-w-0 flex-1">
                   <h4 
-                    className="text-white font-semibold cursor-pointer hover:text-purple-300 transition-colors"
+                    className="text-white font-semibold cursor-pointer hover:text-purple-300 transition-colors text-sm sm:text-base line-clamp-2"
                     onClick={() => recommendation.movieId && onMovieClick(recommendation.movieId)}
                   >
                     {recommendation.title}
                   </h4>
-                  <p className="text-white/60 text-sm">
-                    Recommended on {new Date(recommendation.timestamp).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}
+                  <p className="text-white/60 text-xs sm:text-sm mt-1">
+                    {/* Mobile: Show compact date */}
+                    <span className="sm:hidden">
+                      {new Date(recommendation.timestamp).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric'
+                      })}
+                    </span>
+                    {/* Desktop: Show full date */}
+                    <span className="hidden sm:inline">
+                      Recommended on {new Date(recommendation.timestamp).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </span>
                   </p>
                 </div>
               </div>
               
-              <div className={`flex items-center space-x-2 px-3 py-1 rounded-full ${getStatusColor(recommendation.accepted)}`}>
+              <div className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-1 rounded-full flex-shrink-0 ${getStatusColor(recommendation.accepted)}`}>
                 {getStatusIcon(recommendation.accepted)}
-                <span className="text-sm font-medium">
+                <span className="text-xs sm:text-sm font-medium hidden sm:inline">
                   {getStatusText(recommendation.accepted)}
                 </span>
               </div>
@@ -80,7 +84,7 @@ const RecommendationHistorySection = ({ history, onMovieClick }) => {
           </div>
         ))}
       </div>
-      
+
       {history.length > 10 && (
         <div className="text-center mt-8">
           <p className="text-white/60 text-sm">

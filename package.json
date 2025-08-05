@@ -1,13 +1,19 @@
 {
-  "name": "client",
+  "name": "cinemahint-client",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
+  "description": "CinemaHint - AI-powered movie recommendations tailored to your taste",
+  "keywords": ["movie", "recommendations", "AI", "entertainment", "film"],
+  "author": "CinemaHint",
+  "license": "MIT",
+  "homepage": "https://cinemahint.com",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "vite preview"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.11",

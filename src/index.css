@@ -1,6 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
 
 @layer base {
   * {
@@ -9,6 +18,7 @@
   
   html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
   }
   
   body {
@@ -17,6 +27,9 @@
     color: #fff;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
   }
 }
 
