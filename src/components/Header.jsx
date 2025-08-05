@@ -1,6 +1,6 @@
-import { RefreshCw, Zap } from 'lucide-react';
+import { RefreshCw, Zap, Heart, User, Film } from 'lucide-react';
 
-const Header = ({ user, onSignOut, onStartOver }) => (
+const Header = ({ user, onSignOut, onStartOver, onWatchlistClick, onProfileClick, onGalleryClick }) => (
   <header className="sticky top-0 z-50 bg-black/30 backdrop-blur-xl border-b border-white/10">
     <div className="container mx-auto px-6 py-4">
       <div className="flex justify-between items-center">
@@ -20,6 +20,30 @@ const Header = ({ user, onSignOut, onStartOver }) => (
         
         {/* User section */}
         <div className="flex items-center space-x-4">
+          <button
+            onClick={onGalleryClick}
+            className="flex items-center space-x-2 text-white/70 hover:text-indigo-400 transition-colors bg-white/10 hover:bg-indigo-500/20 px-4 py-2 rounded-xl backdrop-blur-sm"
+          >
+            <Film className="w-4 h-4" />
+            <span className="text-sm font-medium">Gallery</span>
+          </button>
+          
+          <button
+            onClick={onProfileClick}
+            className="flex items-center space-x-2 text-white/70 hover:text-blue-400 transition-colors bg-white/10 hover:bg-blue-500/20 px-4 py-2 rounded-xl backdrop-blur-sm"
+          >
+            <User className="w-4 h-4" />
+            <span className="text-sm font-medium">Profile</span>
+          </button>
+          
+          <button
+            onClick={onWatchlistClick}
+            className="flex items-center space-x-2 text-white/70 hover:text-pink-400 transition-colors bg-white/10 hover:bg-pink-500/20 px-4 py-2 rounded-xl backdrop-blur-sm"
+          >
+            <Heart className="w-4 h-4" />
+            <span className="text-sm font-medium">Watchlist</span>
+          </button>
+          
           <button
             onClick={onStartOver}
             className="flex items-center space-x-2 text-white/70 hover:text-white transition-colors bg-white/10 hover:bg-white/20 px-4 py-2 rounded-xl backdrop-blur-sm"

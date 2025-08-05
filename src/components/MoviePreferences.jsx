@@ -1,5 +1,6 @@
-import React from 'react';
-import { ThumbsUp, ThumbsDown, ChevronRight, Film } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ThumbsUp, ThumbsDown, ChevronRight, Film, Heart } from 'lucide-react';
+import { ApiClient } from '../utils/api.js';
 
 // Loading Skeleton Component
 const MovieSkeleton = () => (
@@ -21,6 +22,9 @@ const MovieSkeleton = () => (
 );
 
 const MoviePreferences = ({ movies = [], preferences, setPreferences, onNext, isLoading = false }) => {
+  const [watchlistStatus, setWatchlistStatus] = useState({});
+  const [watchlistLoading, setWatchlistLoading] = useState({});
+  const apiClient = new ApiClient();
 
   // console.log(movies);
   console.log('Preferences from MoviePreferences', preferences);
@@ -32,10 +36,13 @@ const MoviePreferences = ({ movies = [], preferences, setPreferences, onNext, is
     const movieData = {
       tmdbId: movie.tmdbId || movie.id || null,
       title: movie.title || null,
-      rating: movie.rating || null,
+      rating: movie.rating || movie.voteAverage || null,
       genres: movie.genres || [],
       posterPath: movie.poster_path || movie.posterPath,
-      year: movie.year ||  null
+      backdropPath: movie.backdrop_path || movie.backdropPath,
+      overview: movie.overview,
+      releaseDate: movie.release_date || movie.releaseDate,
+      year: movie.year || (movie.release_date ? new Date(movie.release_date).getFullYear() : null)
     };
     
     if (liked) {
@@ -61,6 +68,55 @@ const MoviePreferences = ({ movies = [], preferences, setPreferences, onNext, is
 
   const isLiked = (movieId) => preferences.likedMovies.some(m => m.tmdbId === movieId);
   const isDisliked = (movieId) => preferences.dislikedMovies.some(m => m.tmdbId === movieId);
+
+  // Check watchlist status for all movies
+  useEffect(() => {
+    const checkWatchlistStatuses = async () => {
+      const statuses = {};
+      for (const movie of movies) {
+        try {
+          const result = await apiClient.checkWatchlistStatus(movie.tmdbId);
+          statuses[movie.tmdbId] = result.isInWatchlist;
+        } catch (error) {
+          console.error('Error checking watchlist status:', error);
+          statuses[movie.tmdbId] = false;
+        }
+      }
+      setWatchlistStatus(statuses);
+    };
+
+    if (movies.length > 0) {
+      checkWatchlistStatuses();
+    }
+  }, [movies]);
+
+  // Toggle watchlist status
+  const toggleWatchlist = async (movie) => {
+    const movieId = movie.tmdbId;
+    if (watchlistLoading[movieId]) return;
+    
+    setWatchlistLoading(prev => ({ ...prev, [movieId]: true }));
+    try {
+      if (watchlistStatus[movieId]) {
+        await apiClient.removeFromWatchlist(movieId);
+        setWatchlistStatus(prev => ({ ...prev, [movieId]: false }));
+      } else {
+        await apiClient.addToWatchlist({
+          tmdbId: movieId,
+          title: movie.title,
+          genres: movie.genres,
+          posterPath: movie.posterPath,
+          rating: movie.rating,
+          year: movie.year
+        });
+        setWatchlistStatus(prev => ({ ...prev, [movieId]: true }));
+      }
+    } catch (error) {
+      console.error('Error toggling watchlist:', error);
+    } finally {
+      setWatchlistLoading(prev => ({ ...prev, [movieId]: false }));
+    }
+  };
 
   // Show loading state if loading
   if (isLoading) {
@@ -116,7 +172,24 @@ const MoviePreferences = ({ movies = [], preferences, setPreferences, onNext, is
                 />
               )}
               <div className="p-4">
-                <h3 className="text-white font-semibold mb-2 line-clamp-2">{movie.title}</h3>
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="text-white font-semibold line-clamp-2 flex-1">{movie.title}</h3>
+                  <button
+                    onClick={() => toggleWatchlist(movie)}
+                    disabled={watchlistLoading[movie.tmdbId]}
+                    className={`ml-2 p-1 rounded-full transition-all ${
+                      watchlistStatus[movie.tmdbId]
+                        ? 'text-pink-500 hover:text-pink-600'
+                        : 'text-gray-400 hover:text-pink-500'
+                    } ${watchlistLoading[movie.tmdbId] ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    {watchlistLoading[movie.tmdbId] ? (
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    ) : (
+                      <Heart className={`w-4 h-4 ${watchlistStatus[movie.tmdbId] ? 'fill-current' : ''}`} />
+                    )}
+                  </button>
+                </div>
                 <p className="text-white/60 text-sm mb-4">
                   {movie.year} • ⭐ {movie.rating?.toFixed(1)}
                 </p>

@@ -193,6 +193,65 @@ export class ApiClient {
     return this.request('/health');
   }
 
+  // Watchlist methods
+  async getWatchlist() {
+    return this.request('/users/watchlist');
+  }
+
+  async addToWatchlist({ tmdbId, title, genres, posterPath, rating, year }) {
+    return this.request('/users/watchlist', {
+      method: 'POST',
+      body: JSON.stringify({
+        tmdbId,
+        title,
+        genres,
+        posterPath,
+        rating,
+        year
+      })
+    });
+  }
+
+  async removeFromWatchlist(tmdbId) {
+    return this.request(`/users/watchlist/${tmdbId}`, {
+      method: 'DELETE'
+    });
+  }
+
+  async checkWatchlistStatus(tmdbId) {
+    return this.request(`/users/watchlist/check/${tmdbId}`);
+  }
+
+  // Movie details from database
+  async getMovieFromDatabase(tmdbId) {
+    return this.request(`/movies/database/${tmdbId}`);
+  }
+
+  // Get all movies for gallery
+  async getAllMovies(page = 1, limit = 50) {
+    return this.request(`/movies/gallery?page=${page}&limit=${limit}`);
+  }
+
+  // Fetch movie from TMDB and save to database
+  async fetchAndSaveMovieFromTMDB(tmdbId) {
+    return this.request(`/movies/fetch-tmdb/${tmdbId}`, {
+      method: 'POST'
+    });
+  }
+
+  // Liked/Disliked movie management
+  async removeFromLikedMovies(tmdbId) {
+    return this.request(`/users/preferences/liked/${tmdbId}`, {
+      method: 'DELETE'
+    });
+  }
+
+  async removeFromDislikedMovies(tmdbId) {
+    return this.request(`/users/preferences/disliked/${tmdbId}`, {
+      method: 'DELETE'
+    });
+  }
+
   // DEPRECATED: Remove backup recommendations as we're now using alternatives
   async getBackupRecommendations() {
     console.warn('getBackupRecommendations is deprecated. Use getAlternativeRecommendation instead.');

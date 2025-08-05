@@ -10,6 +10,10 @@ import DealBreakers from './components/DealBreakers.jsx';
 import ProcessingScreen from './components/ProcessingScreen.jsx';
 import RecommendationScreen from './components/RecommendationScreen.jsx';
 import ErrorScreen from './components/ErrorScreen.jsx';
+import WatchlistScreen from './components/WatchlistScreen.jsx';
+import MovieDetailsScreen from './components/MovieDetailsScreen.jsx';
+import ProfileScreen from './components/ProfileScreen.jsx';
+import MovieGalleryScreen from './components/MovieGalleryScreen.jsx';
 
 // Initialize API client
 const apiClient = new ApiClient();
@@ -79,6 +83,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [popularMovies, setPopularMovies] = useState([]);
   const [error, setError] = useState(null);
+  const [selectedMovieId, setSelectedMovieId] = useState(null);
 
   // Initialize Google Auth
   useEffect(() => {
@@ -200,7 +205,8 @@ function App() {
       await apiClient.submitFeedback({
         movieId: recommendation.tmdbId,
         title: recommendation.title,
-        accepted
+        accepted,
+        genres: recommendation.genres || []
       });
 
       // Mark this recommendation as having received feedback
@@ -237,6 +243,52 @@ function App() {
     }
   };
 
+  // Navigation functions
+  const goToGallery = () => {
+    setCurrentStep('gallery');
+  };
+
+  const goToProfile = () => {
+    setCurrentStep('profile');
+  };
+
+  const goToWatchlist = () => {
+    setCurrentStep('watchlist');
+  };
+
+  const goToMovieDetails = (movieId) => {
+    setSelectedMovieId(movieId);
+    setCurrentStep('movieDetails');
+  };
+
+  const goBackFromGallery = () => {
+    setCurrentStep('welcome');
+  };
+
+  const goBackFromProfile = () => {
+    setCurrentStep('welcome');
+  };
+
+  const goBackFromWatchlist = () => {
+    setCurrentStep('welcome');
+  };
+
+  const goBackFromMovieDetails = () => {
+    // Check where we came from and go back appropriately
+    setCurrentStep('gallery'); // Default to gallery since movies can be accessed from there
+    setSelectedMovieId(null);
+  };
+
+  const goToMovieDetailsFromProfile = (movieId) => {
+    setSelectedMovieId(movieId);
+    setCurrentStep('movieDetails');
+  };
+
+  const goToMovieDetailsFromGallery = (movieId) => {
+    setSelectedMovieId(movieId);
+    setCurrentStep('movieDetails');
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center">
@@ -251,7 +303,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
-      <Header user={user} onSignOut={signOut} onStartOver={startOver} />
+      <Header user={user} onSignOut={signOut} onStartOver={startOver} onWatchlistClick={goToWatchlist} onProfileClick={goToProfile} onGalleryClick={goToGallery} />
       
       <div className="container mx-auto px-4 py-8">
         {currentStep === 'welcome' && (
@@ -316,6 +368,36 @@ function App() {
           <ErrorScreen
             error={error}
             onStartOver={startOver}
+          />
+        )}
+
+        {currentStep === 'gallery' && (
+          <MovieGalleryScreen
+            onBack={goBackFromGallery}
+            onMovieClick={goToMovieDetailsFromGallery}
+          />
+        )}
+
+        {currentStep === 'profile' && (
+          <ProfileScreen
+            user={user}
+            onBack={goBackFromProfile}
+            onMovieClick={goToMovieDetailsFromProfile}
+          />
+        )}
+
+        {currentStep === 'watchlist' && (
+          <WatchlistScreen
+            onBack={goBackFromWatchlist}
+            onMovieClick={goToMovieDetails}
+          />
+        )}
+
+        {currentStep === 'movieDetails' && selectedMovieId && (
+          <MovieDetailsScreen
+            movieId={selectedMovieId}
+            onBack={goBackFromMovieDetails}
+            onFeedback={handleFeedback}
           />
         )}
       </div>
