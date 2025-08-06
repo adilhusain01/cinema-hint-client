@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { RefreshCw, Heart, User, Film, LogOut, Play, Menu, X } from 'lucide-react';
 
-const Header = ({ user = null, onSignOut, onStartOver, onWatchlistClick, onProfileClick, onGalleryClick, onLogoClick, onSignIn }) => {
+const Header = ({ user = null, onSignOut, onStartOver, onProfileClick, onGalleryClick, onLogoClick, onSignIn }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const isAuthenticated = !!user;
 
@@ -60,14 +60,7 @@ const Header = ({ user = null, onSignOut, onStartOver, onWatchlistClick, onProfi
                 <User className="w-4 h-4 group-hover:scale-110 transition-transform duration-200" />
                 <span className="text-sm font-medium">Profile</span>
               </button>
-              
-              <button
-                onClick={onWatchlistClick}
-                className="group flex items-center space-x-2 text-gray-300 hover:text-pink-400 transition-all duration-200 bg-gray-800/50 hover:bg-pink-500/10 px-3 py-2 rounded-lg backdrop-blur-sm border border-gray-700/50 hover:border-pink-500/30 hover:-translate-y-0.5 hover:shadow-lg"
-              >
-                <Heart className="w-4 h-4 group-hover:scale-110 group-hover:fill-pink-400 transition-all duration-200" />
-                <span className="text-sm font-medium">Watchlist</span>
-              </button>
+            
               
               <button
                 onClick={onStartOver}
@@ -184,17 +177,6 @@ const Header = ({ user = null, onSignOut, onStartOver, onWatchlistClick, onProfi
                     >
                       <User className="w-5 h-5" />
                       <span className="font-medium">Profile</span>
-                    </button>
-
-                    <button
-                      onClick={() => {
-                        onWatchlistClick();
-                        toggleMobileMenu();
-                      }}
-                      className="w-full flex items-center space-x-3 text-gray-300 hover:text-pink-400 transition-all duration-200 bg-gray-800/30 hover:bg-pink-500/20 border border-gray-700/30 hover:border-pink-500/30 px-4 py-3 rounded-lg"
-                    >
-                      <Heart className="w-5 h-5" />
-                      <span className="font-medium">Watchlist</span>
                     </button>
 
                     <button

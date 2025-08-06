@@ -356,10 +356,6 @@ function App() {
     signOut();
   };
 
-  const sendAgain = () => {
-    getRecommendation(preferences);
-  };
-
   const updatePreferences = async () => {
     try {
       await apiClient.updatePreferences(preferences);
@@ -375,10 +371,6 @@ function App() {
 
   const goToProfile = () => {
     setCurrentStep('profile');
-  };
-
-  const goToWatchlist = () => {
-    setCurrentStep('watchlist');
   };
 
   const goToMovieDetails = (movieId) => {
@@ -424,7 +416,6 @@ function App() {
         user={user} 
         onSignOut={handleSignOut} 
         onStartOver={startOver} 
-        onWatchlistClick={goToWatchlist} 
         onProfileClick={goToProfile} 
         onGalleryClick={goToGallery}
         onLogoClick={handleLogoClick}
@@ -519,13 +510,6 @@ function App() {
             user={user}
             onBack={goBackFromProfile}
             onMovieClick={goToMovieDetailsFromProfile}
-          />
-        )}
-
-        {currentStep === 'watchlist' && (
-          <WatchlistScreen
-            onBack={goBackFromWatchlist}
-            onMovieClick={goToMovieDetails}
           />
         )}
 
