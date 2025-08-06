@@ -349,8 +349,9 @@ function App() {
     clearSelections();
   };
 
-  // Enhanced signOut function that clears selections
+  // Enhanced signOut function that clears selections and resets to welcome
   const handleSignOut = () => {
+    setCurrentStep('welcome'); // Reset to welcome screen
     clearSelections();
     signOut();
   };
