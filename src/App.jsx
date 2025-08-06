@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ApiClient } from './utils/api.js';
 import { Play, Sparkles, ChevronRight } from 'lucide-react';
-import AuthScreen from './components/AuthScreen.jsx';
 import Header from './components/Header.jsx';
 import WelcomeScreen from './components/WelcomeScreen.jsx';
 import GenreSelection from './components/GenreSelection.jsx';
@@ -11,7 +10,6 @@ import DealBreakers from './components/DealBreakers.jsx';
 import ProcessingScreen from './components/ProcessingScreen.jsx';
 import RecommendationScreen from './components/RecommendationScreen.jsx';
 import ErrorScreen from './components/ErrorScreen.jsx';
-import WatchlistScreen from './components/WatchlistScreen.jsx';
 import MovieDetailsScreen from './components/MovieDetailsScreen.jsx';
 import ProfileScreen from './components/ProfileScreen.jsx';
 import MovieGalleryScreen from './components/MovieGalleryScreen.jsx';
