@@ -44,6 +44,7 @@ const ProfileScreen = ({ user, onBack, onMovieClick }) => {
   };
 
   const refreshData = () => {
+    console.log('🔄 Refreshing profile data...');
     fetchProfileData();
   };
 

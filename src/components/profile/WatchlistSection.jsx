@@ -48,7 +48,7 @@ const WatchlistSection = ({ watchlist, onMovieClick, onRefresh }) => {
               <button
                 onClick={() => removeFromWatchlist(movie.tmdbId)}
                 disabled={removingMovies[movie.tmdbId]}
-                className="absolute top-2 right-2 p-2 bg-black/50 backdrop-blur-sm rounded-full text-white/80 hover:text-red-400 hover:bg-red-500/20 transition-all opacity-0 group-hover:opacity-100"
+                className="absolute top-2 right-2 p-2 bg-black/50 backdrop-blur-sm rounded-full text-white/80 hover:text-red-400 hover:bg-red-500/20 transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100"
               >
                 {removingMovies[movie.tmdbId] ? (
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>

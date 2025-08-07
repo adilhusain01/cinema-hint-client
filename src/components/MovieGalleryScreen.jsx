@@ -216,7 +216,7 @@ const MovieGalleryScreen = ({ onBack, onMovieClick, user = null }) => {
                     <button
                       onClick={() => toggleWatchlist(movie)}
                       disabled={watchlistLoading[movie.tmdbId]}
-                      className={`absolute top-2 right-2 p-2 backdrop-blur-sm rounded-full transition-all opacity-0 group-hover:opacity-100 ${
+                      className={`absolute top-2 right-2 p-2 backdrop-blur-sm rounded-full transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100 ${
                         watchlistStatus[movie.tmdbId]
                           ? 'bg-pink-500/50 text-pink-100 hover:text-pink-200'
                           : 'bg-black/50 text-white/80 hover:text-pink-400 hover:bg-pink-500/20'

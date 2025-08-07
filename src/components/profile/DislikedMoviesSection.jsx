@@ -36,12 +36,14 @@ const DislikedMoviesSection = ({ dislikedMovies, onMovieClick, onRefresh }) => {
   const removeFromDisliked = async (movie) => {
     if (loading[movie.tmdbId]) return;
     
+    console.log('🗑️ Attempting to remove from disliked:', movie.title, movie.tmdbId);
     setLoading(prev => ({ ...prev, [movie.tmdbId]: true }));
     try {
-      await apiClient.removeFromDislikedMovies(movie.tmdbId);
+      const response = await apiClient.removeFromDislikedMovies(movie.tmdbId);
+      console.log('✅ Remove from disliked response:', response);
       onRefresh();
     } catch (error) {
-      console.error('Error removing from disliked movies:', error);
+      console.error('❌ Error removing from disliked movies:', error);
     } finally {
       setLoading(prev => ({ ...prev, [movie.tmdbId]: false }));
     }
@@ -50,9 +52,11 @@ const DislikedMoviesSection = ({ dislikedMovies, onMovieClick, onRefresh }) => {
   const moveToLiked = async (movie) => {
     if (loading[movie.tmdbId]) return;
     
+    console.log('🔄 Attempting to move to liked:', movie.title, movie.tmdbId);
     setLoading(prev => ({ ...prev, [movie.tmdbId]: true }));
     try {
       // First add to liked
+      console.log('📝 Submitting feedback as liked...');
       await apiClient.submitFeedback({
         movieId: movie.tmdbId,
         title: movie.title,
@@ -61,10 +65,12 @@ const DislikedMoviesSection = ({ dislikedMovies, onMovieClick, onRefresh }) => {
       });
       
       // Then remove from disliked
+      console.log('🗑️ Removing from disliked...');
       await apiClient.removeFromDislikedMovies(movie.tmdbId);
+      console.log('✅ Successfully moved to liked');
       onRefresh();
     } catch (error) {
-      console.error('Error moving to liked:', error);
+      console.error('❌ Error moving to liked:', error);
     } finally {
       setLoading(prev => ({ ...prev, [movie.tmdbId]: false }));
     }
@@ -114,7 +120,7 @@ const DislikedMoviesSection = ({ dislikedMovies, onMovieClick, onRefresh }) => {
                   </div>
                 </div>
               )}
-              <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="absolute top-2 right-2 flex gap-1 opacity-100 transition-opacity">
                 <button
                   onClick={() => moveToLiked(movie)}
                   disabled={loading[movie.tmdbId]}
