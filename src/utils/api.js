@@ -1,4 +1,8 @@
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3001/api';
+// API Base URL with fallback for production
+const API_BASE = import.meta.env.VITE_API_BASE || 
+  (import.meta.env.PROD ? 'https://api.cinemahint.com/api' : 'http://localhost:3001/api');
+
+console.log('🔗 API Base URL:', API_BASE);
 
 export class ApiClient {
   constructor() {

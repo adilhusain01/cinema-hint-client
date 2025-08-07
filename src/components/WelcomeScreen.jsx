@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronRight, Play, Sparkles, ChevronDown, Star, LogOut } from 'lucide-react';
 import LoadingSpinner from './common/LoadingSpinner.jsx';
+import logoC from '../assets/logo512.png';
 
 // Unified Welcome/Landing Screen
 const WelcomeScreen = ({ 
@@ -52,11 +53,15 @@ const WelcomeScreen = ({
         
         <div className="max-w-5xl mx-auto text-center px-4 sm:px-6">
           <div className="relative bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-12 border border-gray-700/50 shadow-2xl">
-            {/* Icon with glow effect */}
+            {/* Logo with glow effect */}
             <div className="relative mb-6 sm:mb-8">
               <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-red-600 rounded-full blur-2xl opacity-30 scale-150"></div>
-              <div className="relative bg-gradient-to-r from-red-600 to-red-700 w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-full flex items-center justify-center mx-auto">
-                <Play className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-white" />
+              <div className="relative w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 flex items-center justify-center mx-auto">
+                <img 
+                  src={logoC} 
+                  alt="CinemaHint" 
+                  className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 object-contain border border-gray-700/50 rounded-lg"
+                />
               </div>
             </div>
 

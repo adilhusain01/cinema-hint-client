@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { RefreshCw, User, Film, LogOut, Menu, X } from 'lucide-react';
-import logo from '../assets/logo512.png';
+import logo from '../assets/logo500.png';
 
 const Header = ({ user = null, onSignOut, onStartOver, onProfileClick, onGalleryClick, onLogoClick, onSignIn }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -19,26 +19,11 @@ const Header = ({ user = null, onSignOut, onStartOver, onProfileClick, onGallery
           onClick={onLogoClick}
           className="flex items-center space-x-3 group hover:scale-105 transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-red-500/50 rounded-lg p-2"
         >
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-red-600 rounded-xl blur opacity-30 group-hover:opacity-50 transition-opacity duration-300"></div>
-            <div className="relative bg-gradient-to-r from-red-600 to-red-700 rounded-xl group-hover:from-red-500 group-hover:to-red-600 transition-all duration-300">
-              <img 
-                src={logo} 
-                alt="CinemaHint Logo" 
-                className="w-12 h-12 object-contain group-hover:scale-110 transition-transform duration-300"
-              />
-            </div>
-          </div>
-          <div className="hidden sm:block">
-            <h1 className="text-2xl font-black bg-gradient-to-r from-red-500 to-red-400 bg-clip-text text-transparent group-hover:from-red-400 group-hover:to-red-300 transition-all duration-300">
-              CinemaHint
-            </h1>
-          </div>
-          <div className="sm:hidden">
-            <h1 className="text-xl font-black bg-gradient-to-r from-red-500 to-red-400 bg-clip-text text-transparent">
-              CinemaHint
-            </h1>
-          </div>
+          <img 
+            src={logo} 
+            alt="CinemaHint Logo" 
+            className="h-8 w-auto object-contain group-hover:scale-110 transition-transform duration-300"
+          />
         </button>
         
         {/* Desktop Navigation & User section */}
