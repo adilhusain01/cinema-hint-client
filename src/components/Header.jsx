@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { RefreshCw, Heart, User, Film, LogOut, Play, Menu, X } from 'lucide-react';
+import { RefreshCw, User, Film, LogOut, Menu, X } from 'lucide-react';
+import logo from '../assets/logo512.png';
 
 const Header = ({ user = null, onSignOut, onStartOver, onProfileClick, onGalleryClick, onLogoClick, onSignIn }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -20,17 +21,18 @@ const Header = ({ user = null, onSignOut, onStartOver, onProfileClick, onGallery
         >
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-red-600 rounded-xl blur opacity-30 group-hover:opacity-50 transition-opacity duration-300"></div>
-            <div className="relative bg-gradient-to-r from-red-600 to-red-700 p-3 rounded-xl group-hover:from-red-500 group-hover:to-red-600 transition-all duration-300">
-              <Play className="w-7 h-7 text-white group-hover:rotate-12 transition-transform duration-300" />
+            <div className="relative bg-gradient-to-r from-red-600 to-red-700 rounded-xl group-hover:from-red-500 group-hover:to-red-600 transition-all duration-300">
+              <img 
+                src={logo} 
+                alt="CinemaHint Logo" 
+                className="w-12 h-12 object-contain group-hover:scale-110 transition-transform duration-300"
+              />
             </div>
           </div>
           <div className="hidden sm:block">
             <h1 className="text-2xl font-black bg-gradient-to-r from-red-500 to-red-400 bg-clip-text text-transparent group-hover:from-red-400 group-hover:to-red-300 transition-all duration-300">
               CinemaHint
             </h1>
-            <p className="text-xs text-gray-400 group-hover:text-gray-300 transition-colors duration-200 -mt-1">
-              AI-Powered Movie Discovery
-            </p>
           </div>
           <div className="sm:hidden">
             <h1 className="text-xl font-black bg-gradient-to-r from-red-500 to-red-400 bg-clip-text text-transparent">
