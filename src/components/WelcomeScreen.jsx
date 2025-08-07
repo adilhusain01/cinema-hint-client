@@ -88,9 +88,15 @@ const WelcomeScreen = ({
             ) : (
               /* Non-authenticated User Landing */
               <>
-                <h1 className="text-2xl sm:text-4xl lg:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-red-200 to-red-300 mb-4 sm:mb-6 leading-tight">
-                  CinemaHint
-                </h1>
+                <div className="mb-4 sm:mb-6">
+                  <h1 className="text-2xl sm:text-3xl lg:text-5xl font-bold text-white mb-3 sm:mb-4 leading-tight">
+                    Movies You
+                    <span className="block text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-red-600 font-black">
+                      Actually Love
+                    </span>
+                  </h1>
+            
+                </div>
               
                 {authError && (
                   <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-red-500/20 border border-red-500/50 rounded-lg max-w-md mx-auto">
