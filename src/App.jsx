@@ -503,8 +503,10 @@ function App() {
         {currentStep === 'movieDetails' && selectedMovieId && (
           <MovieDetailsScreen
             movieId={selectedMovieId}
+            user={user}
             onBack={goBackFromMovieDetails}
             onFeedback={handleFeedback}
+            onSignIn={signInWithGoogle}
           />
         )}
       </div>

@@ -241,6 +241,11 @@ export class ApiClient {
     return this.request(`/movies/database/${tmdbId}`);
   }
 
+  // Public movie details (works without authentication)
+  async getPublicMovieDetails(tmdbId) {
+    return this.request(`/movies/public/${tmdbId}`);
+  }
+
   // Get all movies for gallery
   async getAllMovies(page = 1, limit = 50) {
     return this.request(`/movies/gallery?page=${page}&limit=${limit}`);

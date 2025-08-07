@@ -150,8 +150,8 @@ const MovieGalleryScreen = ({ onBack, onMovieClick, user = null }) => {
                 <Film className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-white" />
               </div>
               <div className="min-w-0 flex-1">
-                <h1 className="text-lg sm:text-xl lg:text-3xl font-bold text-white truncate">Movie Gallery</h1>
-                <p className="text-xs sm:text-sm text-white/70 mt-1 hidden sm:block">Discover movies from our database</p>
+                <h1 className="text-lg sm:text-xl lg:text-3xl font-bold text-white truncate">Gallery</h1>
+                <p className="text-xs sm:text-sm text-white/70 mt-1 hidden sm:block">Movies our users got recommended with</p>
               </div>
             </div>
           </div>

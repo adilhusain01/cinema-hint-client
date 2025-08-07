@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Clock, Star, Heart, Trash2, ThumbsUp, ThumbsDown, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Clock, Star, Heart, Trash2, ThumbsUp, ThumbsDown, ExternalLink, LogIn } from 'lucide-react';
 import { ApiClient } from '../utils/api.js';
 
-const MovieDetailsScreen = ({ movieId, onBack, onFeedback }) => {
+const MovieDetailsScreen = ({ movieId, user, onBack, onFeedback, onSignIn }) => {
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isInWatchlist, setIsInWatchlist] = useState(false);
@@ -11,30 +11,41 @@ const MovieDetailsScreen = ({ movieId, onBack, onFeedback }) => {
 
   useEffect(() => {
     fetchMovieDetails();
-    checkWatchlistStatus();
-  }, [movieId]);
+    if (user) {
+      checkWatchlistStatus();
+    }
+  }, [movieId, user]);
 
   const fetchMovieDetails = async () => {
     try {
       setLoading(true);
       
-      // First try to get movie from database
-      try {
-        const data = await apiClient.getMovieFromDatabase(movieId);
-        setMovie(data);
-        return;
-      } catch (dbError) {
-        console.log('Movie not in database, will try to fetch from TMDB:', dbError.message);
-      }
-      
-      // If not in database, try to fetch and save from TMDB
-      try {
-        const tmdbData = await apiClient.fetchAndSaveMovieFromTMDB(movieId);
-        if (tmdbData) {
-          setMovie(tmdbData);
+      if (user) {
+        // Authenticated user - use the full authenticated flow
+        try {
+          const data = await apiClient.getMovieFromDatabase(movieId);
+          setMovie(data);
+          return;
+        } catch (dbError) {
+          console.log('Movie not in database, will try to fetch from TMDB:', dbError.message);
         }
-      } catch (tmdbError) {
-        console.error('Error fetching from TMDB:', tmdbError);
+        
+        try {
+          const tmdbData = await apiClient.fetchAndSaveMovieFromTMDB(movieId);
+          if (tmdbData) {
+            setMovie(tmdbData);
+          }
+        } catch (tmdbError) {
+          console.error('Error fetching from TMDB:', tmdbError);
+        }
+      } else {
+        // Unauthenticated user - use public route
+        try {
+          const publicData = await apiClient.getPublicMovieDetails(movieId);
+          setMovie(publicData);
+        } catch (publicError) {
+          console.error('Error fetching public movie details:', publicError);
+        }
       }
       
     } catch (error) {
@@ -76,19 +87,6 @@ const MovieDetailsScreen = ({ movieId, onBack, onFeedback }) => {
       console.error('Error toggling watchlist:', error);
     } finally {
       setWatchlistLoading(false);
-    }
-  };
-
-  const handleFeedback = async (accepted) => {
-    try {
-      await onFeedback({
-        movieId: movie.tmdbId,
-        title: movie.title,
-        accepted,
-        genres: movie.genres
-      });
-    } catch (error) {
-      console.error('Error submitting feedback:', error);
     }
   };
 
@@ -155,15 +153,43 @@ const MovieDetailsScreen = ({ movieId, onBack, onFeedback }) => {
               >
                 <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white">Movie Not Found</h1>
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white">
+                {!user ? "Sign In Required" : "Movie Not Found"}
+              </h1>
             </div>
-            <p className="text-white/70 mb-8 text-sm sm:text-base">This movie hasn't been loaded into our database yet.</p>
-            <button
-              onClick={onBack}
-              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition-all transform hover:scale-105"
-            >
-              Go Back
-            </button>
+            
+            {!user ? (
+              <>
+                <p className="text-white/70 mb-8 text-sm sm:text-base">
+                  Please sign in to view detailed movie information, add to watchlist, and get personalized recommendations.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+                  <button
+                    onClick={onSignIn}
+                    className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-3 px-6 rounded-xl transition-all transform hover:scale-105 flex items-center justify-center space-x-2"
+                  >
+                    <LogIn className="w-5 h-5" />
+                    <span>Sign In with Google</span>
+                  </button>
+                  <button
+                    onClick={onBack}
+                    className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-xl transition-all transform hover:scale-105"
+                  >
+                    Go Back
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <p className="text-white/70 mb-8 text-sm sm:text-base">This movie hasn't been loaded into our database yet.</p>
+                <button
+                  onClick={onBack}
+                  className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition-all transform hover:scale-105"
+                >
+                  Go Back
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -217,21 +243,23 @@ const MovieDetailsScreen = ({ movieId, onBack, onFeedback }) => {
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between mb-4 gap-3">
                   <h1 className="text-xl sm:text-2xl lg:text-4xl font-bold text-white line-clamp-3 flex-1">{movie.title}</h1>
-                  <button
-                    onClick={toggleWatchlist}
-                    disabled={watchlistLoading}
-                    className={`p-2.5 sm:p-3 rounded-full transition-all flex-shrink-0 ${
-                      isInWatchlist
-                        ? 'text-pink-500 hover:text-pink-600 bg-pink-500/20'
-                        : 'text-gray-400 hover:text-pink-500 bg-white/10 hover:bg-pink-500/20'
-                    } ${watchlistLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  >
-                    {watchlistLoading ? (
-                      <div className="animate-spin rounded-full h-5 w-5 sm:h-6 sm:w-6 border-b-2 border-white"></div>
-                    ) : (
-                      <Heart className={`w-5 h-5 sm:w-6 sm:h-6 ${isInWatchlist ? 'fill-current' : ''}`} />
-                    )}
-                  </button>
+                  {user && (
+                    <button
+                      onClick={toggleWatchlist}
+                      disabled={watchlistLoading}
+                      className={`p-2.5 sm:p-3 rounded-full transition-all flex-shrink-0 ${
+                        isInWatchlist
+                          ? 'text-pink-500 hover:text-pink-600 bg-pink-500/20'
+                          : 'text-gray-400 hover:text-pink-500 bg-white/10 hover:bg-pink-500/20'
+                      } ${watchlistLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                      {watchlistLoading ? (
+                        <div className="animate-spin rounded-full h-5 w-5 sm:h-6 sm:w-6 border-b-2 border-white"></div>
+                      ) : (
+                        <Heart className={`w-5 h-5 sm:w-6 sm:h-6 ${isInWatchlist ? 'fill-current' : ''}`} />
+                      )}
+                    </button>
+                  )}
                 </div>
                 
                 <div className="flex flex-wrap items-center gap-3 sm:gap-4 mb-4 sm:mb-6 text-sm sm:text-base">
@@ -307,6 +335,24 @@ const MovieDetailsScreen = ({ movieId, onBack, onFeedback }) => {
                     </button>
                   )}
                 </div> */}
+                
+                {!user && (
+                  <div className="border-t border-white/20 pt-4 sm:pt-6 mb-4 sm:mb-6">
+                    <div className="bg-gradient-to-r from-red-600/20 to-red-700/20 rounded-xl p-4 sm:p-6 text-center border border-red-600/30">
+                      <h3 className="text-white font-semibold mb-2 text-sm sm:text-base">Want more features?</h3>
+                      <p className="text-white/70 text-xs sm:text-sm mb-4">
+                        Sign in to add movies to your watchlist, get personalized recommendations, and track your movie preferences!
+                      </p>
+                      <button
+                        onClick={onSignIn}
+                        className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-2 px-4 rounded-lg transition-all transform hover:scale-105 flex items-center justify-center space-x-2 mx-auto text-sm"
+                      >
+                        <LogIn className="w-4 h-4" />
+                        <span>Sign In with Google</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
                 
                 <div className="border-t border-white/20 pt-4 sm:pt-6">
                   <h3 className="text-white font-semibold mb-3 sm:mb-4 text-sm sm:text-base">Watch on:</h3>
