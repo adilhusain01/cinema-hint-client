@@ -46,7 +46,7 @@ const WelcomeScreen = ({
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <div className="min-h-[90vh] flex items-center justify-center relative overflow-hidden">
+      <div className="min-h-[70vh] sm:min-h-[80vh] lg:min-h-[90vh] flex items-center justify-center relative overflow-hidden">
         {/* Floating elements */}
         <div className="absolute -top-10 -left-10 w-20 h-20 bg-red-500/20 rounded-full blur-xl animate-pulse"></div>
         <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-red-600/20 rounded-full blur-xl animate-pulse delay-1000"></div>
@@ -136,7 +136,7 @@ const WelcomeScreen = ({
       </div>
 
       {/* How It Works Section - Always visible */}
-      <div className="py-12 sm:py-16">
+      <div className="py-8 sm:py-12 lg:py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4 text-white">How it works</h2>
@@ -172,7 +172,7 @@ const WelcomeScreen = ({
       </div>
 
       {/* FAQ Section - Always visible */}
-      <div className="py-12 sm:py-16">
+      <div className="py-8 sm:py-12 lg:py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4 text-white">Questions?</h2>
