@@ -17,8 +17,8 @@ const WelcomeScreen = ({
   // FAQ Data
   const faqData = [
     {
-      question: "How does the AI recommendation system work?",
-      answer: "Our AI analyzes your genre preferences, movie ratings, viewing context, and feedback to create personalized recommendations. It learns from your choices to get better over time."
+      question: "How does the recommendation system work?",
+      answer: "Our platform analyzes your choices to get better over time."
     },
     {
       question: "Is my data secure?",
@@ -172,7 +172,7 @@ const WelcomeScreen = ({
       </div>
 
       {/* FAQ Section - Always visible */}
-      <div className="py-8 sm:py-12 lg:py-16">
+      <div className="py-8 mt-4 md:mt-0 sm:py-12 lg:py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4 text-white">Questions?</h2>
