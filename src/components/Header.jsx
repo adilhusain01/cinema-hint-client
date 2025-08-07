@@ -17,7 +17,7 @@ const Header = ({ user = null, onSignOut, onStartOver, onProfileClick, onGallery
         {/* Logo/Brand - Clickable */}
         <button 
           onClick={onLogoClick}
-          className="flex items-center space-x-3 group hover:scale-105 transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-red-500/50 rounded-lg p-2"
+          className="flex items-center space-x-3 group hover:scale-105 transition-all duration-300 ease-out rounded-lg p-2"
         >
           <img 
             src={logo} 
