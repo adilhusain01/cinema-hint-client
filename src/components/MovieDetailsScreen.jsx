@@ -94,17 +94,17 @@ const MovieDetailsScreen = ({ movieId, onBack, onFeedback }) => {
 
   const platformLinks = [
     {
-      name: 'MoviesMod',
+      name: 'MoviesMod (Download)',
       url: 'https://moviesmod.tube',
       color: 'bg-blue-600 hover:bg-blue-700'
     },
     {
-      name: 'YTS',
+      name: 'YTS (Torrent)',
       url: 'https://en.yts-official.mx',
       color: 'bg-red-600 hover:bg-green-700'
     },
     {
-      name: 'IMDb',
+      name: 'IMDb (Research)',
       url: `https://www.imdb.com/find?q=${encodeURIComponent(movie?.title || '')}`,
       color: 'bg-yellow-600 hover:bg-yellow-700'
     },

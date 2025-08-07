@@ -43,7 +43,7 @@ const LandingPage = ({ onSignIn, authError, isLoading = false }) => {
     },
     {
       question: "Can I find where to watch recommended movies?",
-      answer: "Yes! We provide direct links to popular streaming platforms like MoviesMod, Yify, YTS, and more."
+      answer: "Yes! We provide direct links to popular streaming platforms like MoviesMod, YTS, etc."
     },
     {
       question: "Is the service free?",
