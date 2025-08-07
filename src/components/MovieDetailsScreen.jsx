@@ -94,20 +94,20 @@ const MovieDetailsScreen = ({ movieId, onBack, onFeedback }) => {
 
   const platformLinks = [
     {
+      name: 'MoviesMod',
+      url: 'https://moviesmod.tube',
+      color: 'bg-blue-600 hover:bg-blue-700'
+    },
+    {
+      name: 'YTS',
+      url: 'https://en.yts-official.mx',
+      color: 'bg-red-600 hover:bg-green-700'
+    },
+    {
       name: 'IMDb',
       url: `https://www.imdb.com/find?q=${encodeURIComponent(movie?.title || '')}`,
       color: 'bg-yellow-600 hover:bg-yellow-700'
     },
-    {
-      name: 'Netflix',
-      url: 'https://www.netflix.com/search?q=' + encodeURIComponent(movie?.title || ''),
-      color: 'bg-red-600 hover:bg-red-700'
-    },
-    {
-      name: 'Prime Video',
-      url: 'https://www.amazon.com/s?k=' + encodeURIComponent(movie?.title || '') + '&i=prime-instant-video',
-      color: 'bg-blue-600 hover:bg-blue-700'
-    }
   ];
 
   if (loading) {
@@ -279,7 +279,7 @@ const MovieDetailsScreen = ({ movieId, onBack, onFeedback }) => {
                   </p>
                 )}
                 
-                <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 mb-4 sm:mb-6">
+                {/* <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 mb-4 sm:mb-6">
                   <button
                     onClick={() => handleFeedback(true)}
                     className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 sm:py-3 px-4 sm:px-6 rounded-xl transition-all transform hover:scale-105 flex items-center justify-center space-x-2 text-sm sm:text-base"
@@ -306,7 +306,7 @@ const MovieDetailsScreen = ({ movieId, onBack, onFeedback }) => {
                       <span className="sm:hidden">Remove</span>
                     </button>
                   )}
-                </div>
+                </div> */}
                 
                 <div className="border-t border-white/20 pt-4 sm:pt-6">
                   <h3 className="text-white font-semibold mb-3 sm:mb-4 text-sm sm:text-base">Watch on:</h3>

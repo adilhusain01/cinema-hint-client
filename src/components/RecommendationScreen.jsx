@@ -53,35 +53,20 @@ const RecommendationScreen = ({ movie: rawMovie, onFeedback, onGetAlternative })
 
   const platformLinks = [
     {
-      name: 'IMDb',
-      url: `https://www.imdb.com/find?q=${encodeURIComponent(movieData.title)}`,
-      color: 'bg-yellow-600 hover:bg-yellow-700'
-    },
-    {
-      name: 'Netflix',
-      url: 'https://www.netflix.com/search?q=' + encodeURIComponent(movieData.title),
-      color: 'bg-red-600 hover:bg-red-700'
-    },
-    {
-      name: 'Prime Video',
-      url: 'https://www.amazon.com/s?k=' + encodeURIComponent(movieData.title) + '&i=prime-instant-video',
+      name: 'MoviesMod',
+      url: 'https://moviesmod.tube',
       color: 'bg-blue-600 hover:bg-blue-700'
     },
     {
-      name: 'Hulu',
-      url: 'https://www.hulu.com/search?q=' + encodeURIComponent(movieData.title),
-      color: 'bg-green-600 hover:bg-green-700'
+      name: 'YTS',
+      url: 'https://en.yts-official.mx',
+      color: 'bg-red-600 hover:bg-green-700'
     },
     {
-      name: 'Disney+',
-      url: 'https://www.disneyplus.com/search?q=' + encodeURIComponent(movieData.title),
-      color: 'bg-blue-800 hover:bg-blue-900'
+      name: 'IMDb',
+      url: `https://www.imdb.com/find?q=${encodeURIComponent(movie?.title || '')}`,
+      color: 'bg-yellow-600 hover:bg-yellow-700'
     },
-    {
-      name: 'Apple TV+',
-      url: 'https://tv.apple.com/search?term=' + encodeURIComponent(movieData.title),
-      color: 'bg-gray-800 hover:bg-gray-900'
-    }
   ];
 
   // Check if movie is in watchlist on component mount
