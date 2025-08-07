@@ -360,11 +360,6 @@ function App() {
     setCurrentStep('profile');
   };
 
-  const goToMovieDetails = (movieId) => {
-    setSelectedMovieId(movieId);
-    setCurrentStep('movieDetails');
-  };
-
   const goBackFromGallery = () => {
     setCurrentStep('welcome');
   };
@@ -505,7 +500,6 @@ function App() {
             movieId={selectedMovieId}
             user={user}
             onBack={goBackFromMovieDetails}
-            onFeedback={handleFeedback}
             onSignIn={signInWithGoogle}
           />
         )}

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Clock, Star, Heart, Trash2, ThumbsUp, ThumbsDown, ExternalLink, LogIn } from 'lucide-react';
+import { ArrowLeft, Clock, Star, Heart, ExternalLink, LogIn } from 'lucide-react';
 import { ApiClient } from '../utils/api.js';
 
-const MovieDetailsScreen = ({ movieId, user, onBack, onFeedback, onSignIn }) => {
+const MovieDetailsScreen = ({ movieId, user, onBack, onSignIn }) => {
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isInWatchlist, setIsInWatchlist] = useState(false);
@@ -307,35 +307,6 @@ const MovieDetailsScreen = ({ movieId, user, onBack, onFeedback, onSignIn }) => 
                   </p>
                 )}
                 
-                {/* <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 mb-4 sm:mb-6">
-                  <button
-                    onClick={() => handleFeedback(true)}
-                    className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 sm:py-3 px-4 sm:px-6 rounded-xl transition-all transform hover:scale-105 flex items-center justify-center space-x-2 text-sm sm:text-base"
-                  >
-                    <ThumbsUp className="w-4 h-4 sm:w-5 sm:h-5" />
-                    <span>I like this</span>
-                  </button>
-                  
-                  <button
-                    onClick={() => handleFeedback(false)}
-                    className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 sm:py-3 px-4 sm:px-6 rounded-xl transition-all transform hover:scale-105 flex items-center justify-center space-x-2 text-sm sm:text-base"
-                  >
-                    <ThumbsDown className="w-4 h-4 sm:w-5 sm:h-5" />
-                    <span>Not for me</span>
-                  </button>
-                  
-                  {isInWatchlist && (
-                    <button
-                      onClick={toggleWatchlist}
-                      className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2.5 sm:py-3 px-4 sm:px-6 rounded-xl transition-all transform hover:scale-105 flex items-center justify-center space-x-2 text-sm sm:text-base"
-                    >
-                      <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
-                      <span className="hidden sm:inline">Remove from Watchlist</span>
-                      <span className="sm:hidden">Remove</span>
-                    </button>
-                  )}
-                </div> */}
-                
                 {!user && (
                   <div className="border-t border-white/20 pt-4 sm:pt-6 mb-4 sm:mb-6">
                     <div className="bg-gradient-to-r from-red-600/20 to-red-700/20 rounded-xl p-4 sm:p-6 text-center border border-red-600/30">
@@ -349,7 +320,11 @@ const MovieDetailsScreen = ({ movieId, user, onBack, onFeedback, onSignIn }) => 
                       >
                         <LogIn className="w-4 h-4" />
                         <span>Sign In with Google</span>
+
                       </button>
+
+                       {/* Fallback Google Sign-In Button Container */}
+                      <div id="google-signin-button" className="mx-auto flex justify-center mt-3 sm:mt-4"></div>
                     </div>
                   </div>
                 )}
