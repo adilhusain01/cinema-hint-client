@@ -29,7 +29,7 @@ const ContextSelection = ({ preferences = { moods: [], socialContext: null }, se
   const [error, setError] = useState(null);
 
 
-  console.log('Preferences from ContextSelection', preferences);
+  // console.log('Preferences from ContextSelection', preferences);  
 
   const toggleMood = (id) => {
     setPreferences(prev => {

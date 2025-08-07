@@ -49,13 +49,13 @@ const useGoogleAuth = () => {
   };
 
   const signInWithGoogle = () => {
-    console.log('Sign in with Google triggered');
+    // console.log('Sign in with Google triggered');
     if (window.google?.accounts?.id) {
-      console.log('Prompting Google Sign-In...');
+      // console.log('Prompting Google Sign-In...');
       window.google.accounts.id.prompt((notification) => {
-        console.log('Google Sign-In prompt result:', notification);
+        // console.log('Google Sign-In prompt result:', notification);
         if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-          console.log('Google Sign-In prompt was not displayed or skipped');
+          // console.log('Google Sign-In prompt was not displayed or skipped');
           // Fallback: try to render a button inline
           renderGoogleSignInButton();
         }
@@ -67,7 +67,7 @@ const useGoogleAuth = () => {
   };
 
   const renderGoogleSignInButton = () => {
-    console.log('Rendering Google Sign-In button as fallback');
+    // console.log('Rendering Google Sign-In button as fallback');
     if (window.google?.accounts?.id) {
       const buttonContainer = document.getElementById('google-signin-button');
       if (buttonContainer) {
@@ -86,9 +86,9 @@ const useGoogleAuth = () => {
 
   const handleGoogleResponse = async (response) => {
     try {
-      console.log('Google response received:', response);
-      console.log('Response keys:', Object.keys(response || {}));
-      console.log('Credential present:', !!response?.credential);
+      // console.log('Google response received:', response);
+      // console.log('Response keys:', Object.keys(response || {}));
+      // console.log('Credential present:', !!response?.credential);
       setAuthError(null);
       
       if (!response) {
@@ -102,7 +102,7 @@ const useGoogleAuth = () => {
         throw new Error('No credential received from Google');
       }
       
-      console.log('Using token:', token.substring(0, 50) + '...');
+      // console.log('Using token:', token.substring(0, 50) + '...');
       const data = await apiClient.googleAuth(token);
       localStorage.setItem('token', data.token);
       setUser(data.user);
@@ -165,7 +165,7 @@ function App() {
     const initGoogleAuth = () => {
       try {
         if (window.google?.accounts?.id) {
-          console.log('Initializing Google Sign-In with client ID:', import.meta.env.VITE_GOOGLE_CLIENT_ID);
+          // console.log('Initializing Google Sign-In with client ID:', import.meta.env.VITE_GOOGLE_CLIENT_ID);
           window.google.accounts.id.initialize({
             client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
             callback: handleGoogleResponse,
@@ -173,7 +173,7 @@ function App() {
             cancel_on_tap_outside: true,
             use_fedcm_for_prompt: false
           });
-          console.log('Google Sign-In initialized successfully');
+          // console.log('Google Sign-In initialized successfully');
         }
       } catch (error) {
         console.error('Error initializing Google Sign-In:', error);
@@ -190,13 +190,13 @@ function App() {
     if (window.google) {
       initGoogleAuth();
     } else {
-      console.log('Loading Google Sign-In script...');
+      // console.log('Loading Google Sign-In script...');
       const script = document.createElement('script');
       script.src = 'https://accounts.google.com/gsi/client';
       script.async = true;
       script.defer = true;
       script.onload = () => {
-        console.log('Google Sign-In script loaded');
+        // console.log('Google Sign-In script loaded');
         initGoogleAuth();
       };
       script.onerror = (error) => {
@@ -220,17 +220,6 @@ function App() {
       setIsLoading(false);
     } catch (error) {
       console.error('Error fetching popular movies:', error);
-    }
-  };
-
-  // Save preferences
-  const savePreferences = async () => {
-    if (!user) return;
-    
-    try {
-      await apiClient.savePreferences(preferences);
-    } catch (error) {
-      console.error('Error saving preferences:', error);
     }
   };
 

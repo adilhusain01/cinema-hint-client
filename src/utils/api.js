@@ -2,7 +2,7 @@
 const API_BASE = import.meta.env.VITE_API_BASE || 
   (import.meta.env.PROD ? 'https://api.cinemahint.com/api' : 'http://localhost:3001/api');
 
-console.log('🔗 API Base URL:', API_BASE);
+// console.log('🔗 API Base URL:', API_BASE);
 
 export class ApiClient {
   constructor() {
@@ -49,15 +49,15 @@ export class ApiClient {
   // Auth methods
   async googleAuth(token) {
     try {
-      console.log('Sending token to server:', token ? 'Token present' : 'No token');
-      console.log('Token length:', token?.length);
-      console.log('Token preview:', token ? token.substring(0, 100) + '...' : 'N/A');
+      // console.log('Sending token to server:', token ? 'Token present' : 'No token');
+      // console.log('Token length:', token?.length);
+      // console.log('Token preview:', token ? token.substring(0, 100) + '...' : 'N/A');
       
       const requestBody = { 
         token,
         credential: token // Send as both for compatibility
       };
-      console.log('Request body keys:', Object.keys(requestBody));
+      // console.log('Request body keys:', Object.keys(requestBody));
       
       const response = await this.request('/auth/google', {
         method: 'POST',
@@ -122,7 +122,7 @@ export class ApiClient {
       dealBreakers
     };
 
-    console.log('Sending recommendation request with:', preferences);
+    // console.log('Sending recommendation request with:', preferences);
   
     return this.request('/movies/recommend', {
       method: 'POST',
@@ -140,7 +140,7 @@ export class ApiClient {
       isAlternative: true // Flag to indicate this is an alternative request
     };
 
-    console.log('Sending alternative recommendation request with:', preferences);
+    // console.log('Sending alternative recommendation request with:', preferences);
   
     return this.request('/movies/recommend', {
       method: 'POST',

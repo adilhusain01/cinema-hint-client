@@ -11,37 +11,7 @@ const GENRES = [
 const GenreSelection = ({ preferences = { genres: [] }, setPreferences, onNext }) => {
   const apiClient = new ApiClient();
 
-  console.log('Preferences from GenreSelection', preferences);
-  
-  // useEffect(() => {
-  //   const loadPreferences = async () => {
-  //     try {
-  //       const savedPrefs = await apiClient.getUserPreferences();
-  //       // Ensure we have an array of genre names
-  //       let savedGenres = [];
-        
-  //       if (savedPrefs.preferredGenres) {
-  //         savedGenres = savedPrefs.preferredGenres;
-  //       } else if (savedPrefs.genres) {
-  //         // Convert any numeric IDs to genre names if needed
-  //         savedGenres = savedPrefs.genres.map(genre => 
-  //           typeof genre === 'number' ? getGenreName(genre) : genre
-  //         ).filter(Boolean);
-  //       }
-        
-  //       if (savedGenres.length > 0) {
-  //         setPreferences(prev => ({
-  //           ...prev,
-  //           genres: savedGenres
-  //         }));
-  //       }
-  //     } catch (error) {
-  //       console.error('Failed to load preferences:', error);
-  //     }
-  //   };
-    
-  //   loadPreferences();
-  // }, [setPreferences]);
+  // console.log('Preferences from GenreSelection', preferences);
 
   // Helper function to format genre name for display
   const formatLabel = (genre) => {

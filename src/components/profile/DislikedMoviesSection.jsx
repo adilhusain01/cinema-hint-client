@@ -36,11 +36,11 @@ const DislikedMoviesSection = ({ dislikedMovies, onMovieClick, onRefresh }) => {
   const removeFromDisliked = async (movie) => {
     if (loading[movie.tmdbId]) return;
     
-    console.log('🗑️ Attempting to remove from disliked:', movie.title, movie.tmdbId);
+    // console.log('🗑️ Attempting to remove from disliked:', movie.title, movie.tmdbId);
     setLoading(prev => ({ ...prev, [movie.tmdbId]: true }));
     try {
       const response = await apiClient.removeFromDislikedMovies(movie.tmdbId);
-      console.log('✅ Remove from disliked response:', response);
+      // console.log('✅ Remove from disliked response:', response);
       onRefresh();
     } catch (error) {
       console.error('❌ Error removing from disliked movies:', error);
@@ -52,11 +52,11 @@ const DislikedMoviesSection = ({ dislikedMovies, onMovieClick, onRefresh }) => {
   const moveToLiked = async (movie) => {
     if (loading[movie.tmdbId]) return;
     
-    console.log('🔄 Attempting to move to liked:', movie.title, movie.tmdbId);
+    // console.log('🔄 Attempting to move to liked:', movie.title, movie.tmdbId);
     setLoading(prev => ({ ...prev, [movie.tmdbId]: true }));
     try {
       // First add to liked
-      console.log('📝 Submitting feedback as liked...');
+      // console.log('📝 Submitting feedback as liked...');
       await apiClient.submitFeedback({
         movieId: movie.tmdbId,
         title: movie.title,
@@ -65,9 +65,9 @@ const DislikedMoviesSection = ({ dislikedMovies, onMovieClick, onRefresh }) => {
       });
       
       // Then remove from disliked
-      console.log('🗑️ Removing from disliked...');
+      // console.log('🗑️ Removing from disliked...');
       await apiClient.removeFromDislikedMovies(movie.tmdbId);
-      console.log('✅ Successfully moved to liked');
+      // console.log('✅ Successfully moved to liked');
       onRefresh();
     } catch (error) {
       console.error('❌ Error moving to liked:', error);
