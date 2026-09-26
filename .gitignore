@@ -17,8 +17,6 @@ dist-ssr
 node_modules
 Dockerfile
 nginx.conf
-public/manifest.json
-public/robots.txt
 
 # Editor directories and files
 .vscode/*
